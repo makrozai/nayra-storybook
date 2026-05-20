@@ -53,6 +53,14 @@ jobs:
           scope: '@makrozai'
 
       - name: Publish to GitHub Packages
-        run: pnpm publish --no-git-checks --access public
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          EXISTS=$(npm view @makrozai/nayra-storybook@${CURRENT} version \
+            --registry https://npm.pkg.github.com 2>/dev/null || echo "")
+          if [ "$EXISTS" = "$CURRENT" ]; then
+            echo "Version ${CURRENT} already published — skipping"
+            exit 0
+          fi
+          pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

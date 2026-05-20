@@ -9,8 +9,33 @@ permissions:
   pull-requests: write
 
 jobs:
-  release-pr:
+  check-commits:
     if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    outputs:
+      has_real_commits: ${{ steps.check.outputs.has_real_commits }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for real commits
+        id: check
+        run: |
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+          REAL_COMMITS=$(git log "$MERGE_BASE"..HEAD --pretty=format:"%s" --no-merges \
+            | grep -v "^chore(sync):" | wc -l | tr -d ' ')
+          if [ "$REAL_COMMITS" = "0" ]; then
+            echo "No real commits since last master merge — skipping PR"
+            echo "has_real_commits=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_real_commits=true" >> $GITHUB_OUTPUT
+          fi
+
+  release-pr:
+    needs: check-commits
+    if: needs.check-commits.outputs.has_real_commits == 'true'
     runs-on: ubuntu-latest
 
     steps:
