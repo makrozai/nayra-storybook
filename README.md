@@ -31,10 +31,10 @@ Proporciona un sistema de diseño agnóstico centralizado, preparado para implem
 | Vue 3 | ^3.5.0 | Framework base (peer dependency) |
 | TypeScript | ^5.7.0 | Tipado estricto en toda la librería |
 | Tailwind CSS | ^4.3.0 | Utilidades CSS y sistema de tokens |
-| Vite | ^5.2.0 | Build tool y servidor de desarrollo |
+| Vite | ^6.4.2 | Build tool y servidor de desarrollo |
 | Storybook | ^8.6.18 | Documentación visual interactiva |
 | storybook-dark-mode | ^4.0.2 | Toggle de tema en Storybook |
-| Vitest | ^2.1.9 | Tests unitarios y de componentes |
+| Vitest | ^3.2.4 | Tests unitarios y de componentes |
 | Playwright | ^1.60.0 | Tests E2E sobre Storybook |
 | ESLint | ^10.4.0 | Linting con flat config + TypeScript + Vue |
 | vite-svg-loader | ^5.1.1 | Importación de SVGs como componentes Vue |
@@ -833,15 +833,36 @@ import { useNayraTheme } from '~/composables/useNayraTheme'
 
 ### Estrategia de ramas
 
-| Rama | Propósito | Acceso |
+| Rama | Propósito | Protección |
 |---|---|---|
-| `develop` | Desarrollo activo. Todo el trabajo nuevo parte de aquí | Push directo |
-| `master` | Producción. Cada merge dispara el pipeline de deploy | Solo via PR aprobado |
-| `gh-pages` | Generada automáticamente por CI. Nunca se toca manualmente | Solo escritura del bot |
+| `develop` | Desarrollo activo. Todo el trabajo nuevo parte de aquí | PR obligatorio — sin aprobación requerida |
+| `master` | Producción. Cada merge dispara el pipeline de deploy | PR + aprobación de Code Owner |
+| `gh-pages` | Generada automáticamente por CI — nunca se toca manualmente | Solo escritura del bot |
 
-### Pipeline (GitHub Actions)
+### Workflows (GitHub Actions)
 
-El archivo `.github/workflows/deploy.yml` se ejecuta en cada push a `master`:
+#### `auto-pr.yml` — PR automático a master
+
+Se ejecuta en cada push a `develop` (excepto commits del bot). Genera automáticamente el PR de release con:
+
+- **Versión semántica** calculada desde los mensajes de commit (Conventional Commits):
+  - `BREAKING CHANGE` / `tipo!:` → bump **major**
+  - `feat:` → bump **minor**
+  - `fix:` / `ci:` / `docs:` / `chore:` → bump **patch**
+- **Changelog** agrupado por tipo de commit
+- **Reviewer** `@makrozai` asignado automáticamente
+
+```
+push a develop
+  └─ calcula versión semántica desde commits
+  └─ genera changelog agrupado (feat / fix / ci / docs / chore)
+  └─ crea o actualiza PR develop→master
+       └─ asigna @makrozai como reviewer
+```
+
+#### `deploy.yml` — Deploy a GitHub Pages
+
+Se ejecuta en cada push a `master` (tras el merge del PR de release):
 
 ```
 push a master
@@ -850,22 +871,49 @@ push a master
   └─ pnpm test
   └─ pnpm build          ← valida que dist/ compila correctamente
   └─ pnpm storybook:build
-       └─ peaceiris/actions-gh-pages
-            └─ publica storybook-static/ en gh-pages
-                 └─ GitHub Pages sirve el sitio en producción
+       └─ deploy a gh-pages
+            └─ GitHub Pages actualizado en producción
 ```
 
-### Flujo de trabajo diario
+#### `dependency-review.yml` — Auditoría de dependencias
 
-```bash
-# 1. Trabajar en develop
-git checkout develop
-# ... cambios, commits ...
-git push origin develop
+Se ejecuta en cada PR a `master`. Escanea el `pnpm-lock.yaml` en busca de dependencias con vulnerabilidades conocidas (CVEs) y bloquea el merge si se detectan paquetes inseguros.
 
-# 2. Crear PR de develop → master en GitHub
-# 3. Revisar y aprobar el PR
-# 4. Merge → el pipeline despliega automáticamente
+### Protección de ramas
+
+#### `master`
+- Push directo bloqueado
+- Force push bloqueado
+- Requiere PR con 1 aprobación del Code Owner (`@makrozai`)
+- Reviews descartan automáticamente al añadir nuevos commits
+
+#### `develop`
+- Push directo bloqueado
+- Force push bloqueado
+- Requiere PR — sin aprobaciones requeridas (merge inmediato)
+
+### CODEOWNERS
+
+El archivo `.github/CODEOWNERS` define a `@makrozai` como propietario de todo el código. GitHub solicita automáticamente su revisión en cualquier PR, y la protección de `master` exige su aprobación antes de mergear.
+
+### Flujo de trabajo completo
+
+```
+1. Crear rama feature/fix desde develop
+   git checkout develop && git checkout -b feature/mi-cambio
+
+2. Desarrollar, commitear con Conventional Commits
+   git commit -m "feat(componente): descripción del cambio"
+
+3. Crear PR → develop (sin aprobación requerida)
+   → merge inmediato si CI pasa
+
+4. El merge dispara auto-pr.yml
+   → PR develop→master generado automáticamente con versión y changelog
+   → @makrozai notificado como reviewer
+
+5. Revisar, aprobar y mergear el PR a master
+   → deploy.yml despliega el Storybook actualizado
 ```
 
 El Storybook actualizado queda disponible en:
