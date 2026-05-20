@@ -1,41 +1,19 @@
 name: Auto PR to master
 
 on:
-  push:
-    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Forzar versión (ej: 2.0.0). Vacío = cálculo automático desde commits'
+        required: false
+        default: ''
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  check-commits:
-    if: github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
-    outputs:
-      has_real_commits: ${{ steps.check.outputs.has_real_commits }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check for real commits
-        id: check
-        run: |
-          MERGE_BASE=$(git merge-base HEAD origin/master)
-          REAL_COMMITS=$(git log "$MERGE_BASE"..HEAD --pretty=format:"%s" --no-merges \
-            | grep -v "^chore(sync):" | wc -l | tr -d ' ')
-          if [ "$REAL_COMMITS" = "0" ]; then
-            echo "No real commits since last master merge — skipping PR"
-            echo "has_real_commits=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_real_commits=true" >> $GITHUB_OUTPUT
-          fi
-
   release-pr:
-    needs: check-commits
-    if: needs.check-commits.outputs.has_real_commits == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -49,15 +27,19 @@ jobs:
           CURRENT=$(node -p "require('./package.json').version")
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
 
-          MERGE_BASE=$(git merge-base HEAD origin/master)
-          COMMITS=$(git log "$MERGE_BASE"..HEAD --pretty=format:"%s")
-
-          if echo "$COMMITS" | grep -qiE "^.+!:|BREAKING[[:space:]]CHANGE"; then
-            NEXT="$((MAJOR + 1)).0.0"
-          elif echo "$COMMITS" | grep -qE "^feat(\([^)]+\))?[!:]?[[:space:]]"; then
-            NEXT="${MAJOR}.$((MINOR + 1)).0"
+          if [ -n "${{ github.event.inputs.version_override }}" ]; then
+            NEXT="${{ github.event.inputs.version_override }}"
           else
-            NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))"
+            MERGE_BASE=$(git merge-base HEAD origin/master)
+            COMMITS=$(git log "$MERGE_BASE"..HEAD --pretty=format:"%s")
+
+            if echo "$COMMITS" | grep -qiE "^.+!:|BREAKING[[:space:]]CHANGE"; then
+              NEXT="$((MAJOR + 1)).0.0"
+            elif echo "$COMMITS" | grep -qE "^feat(\([^)]+\))?[!:]?[[:space:]]"; then
+              NEXT="${MAJOR}.$((MINOR + 1)).0"
+            else
+              NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))"
+            fi
           fi
 
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
