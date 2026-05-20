@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import type { App, Plugin } from 'vue'
+import { nayraConfig } from './config'
 import Button from './components/Button/Button.vue'
 import Icon from './components/Icon/Icon.vue'
 import Header from './components/Header/Header.vue'
@@ -23,12 +23,14 @@ const components = {
 }
 
 export const NayraUI: Plugin = {
-  install(app: App, options: { theme?: 'light' | 'dark' | 'auto' } = {}) {
+  install(app: App, options: { theme?: 'light' | 'dark' | 'auto'; prefix?: string } = {}) {
     const initialTheme = options.theme || 'auto'
-    
-    // Registrar componentes globalmente con el prefijo "Na"
+    const prefix = options.prefix ?? 'Na'
+    nayraConfig.prefix = prefix
+
+    // Registrar componentes globalmente con el prefijo configurado (por defecto 'Na')
     for (const [name, component] of Object.entries(components)) {
-      app.component(`Na${name}`, component)
+      app.component(`${prefix}${name}`, component)
     }
 
     // Inicializar tema
@@ -37,7 +39,7 @@ export const NayraUI: Plugin = {
   }
 }
 
-// Exportar componentes de manera individual y composables
+// Exportar componentes de manera individual, composables y config
 export {
   Button,
   Icon,
@@ -47,5 +49,6 @@ export {
   FeatureCard,
   InteractiveCounter,
   CounterControls,
-  useNayraTheme
+  useNayraTheme,
+  nayraConfig
 }
