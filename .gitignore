@@ -33,6 +33,12 @@ Thumbs.db
 # Test coverage
 coverage/
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
 # Claude Code (local settings with credentials + auto-generated symlinks)
 .claude/
 
