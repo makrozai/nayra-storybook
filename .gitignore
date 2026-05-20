@@ -29,3 +29,12 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Claude Code (local settings with credentials + auto-generated symlinks)
+.claude/
+
+# Claude Code skills lock
+skills-lock.json
