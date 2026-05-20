@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from './Button.vue'
+import { nayraConfig } from '~/config'
 
 const meta: Meta<typeof Button> = {
   title: 'Atoms/Button',
@@ -94,31 +95,37 @@ export const WithIcon: Story = {
     variant: 'increment',
     ariaLabel: 'Incrementar con icono',
   },
-  render: (args) => ({
-    setup() {
-      return { args }
-    },
-    template: `
-      <NaButton v-bind="args">
-        <template #icon>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-        </template>
-      </NaButton>
-    `,
-  }),
+  render: (args) => {
+    const tag = `${nayraConfig.prefix}Button`
+    return {
+      components: { [tag]: Button },
+      setup() { return { args } },
+      template: `
+        <${tag} v-bind="args">
+          <template #icon>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </template>
+        </${tag}>
+      `
+    }
+  },
 }
 
 export const AllVariants: Story = {
-  render: () => ({
-    template: `
-      <div style="display: flex; gap: 1rem; align-items: center;">
-        <NaButton label="Decrementar" variant="decrement" aria-label="Decrementar contador" />
-        <NaButton label="Reiniciar" variant="reset" aria-label="Reiniciar contador" />
-        <NaButton label="Incrementar" variant="increment" aria-label="Incrementar contador" />
-      </div>
-    `,
-  }),
+  render: () => {
+    const tag = `${nayraConfig.prefix}Button`
+    return {
+      components: { [tag]: Button },
+      template: `
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <${tag} label="Decrementar" variant="decrement" aria-label="Decrementar contador" />
+          <${tag} label="Reiniciar" variant="reset" aria-label="Reiniciar contador" />
+          <${tag} label="Incrementar" variant="increment" aria-label="Incrementar contador" />
+        </div>
+      `
+    }
+  },
 }
