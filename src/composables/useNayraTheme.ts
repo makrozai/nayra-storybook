@@ -5,7 +5,7 @@ import type { Ref } from 'vue'
 const activeTheme = ref<'light' | 'dark'>('dark')
 let mediaQueryList: MediaQueryList | null = null
 
-type ThemeValue = 'light' | 'dark'
+export type ThemeValue = 'light' | 'dark'
 
 type UseNayraThemeReturn = {
   theme: Ref<ThemeValue>

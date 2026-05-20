@@ -31,7 +31,7 @@ defineProps<HeaderProps>()
       </div>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 1rem;">
+    <div class="c-header__actions">
       <!-- Estatus de Pruebas Unitarias -->
       <div class="c-header__badge" role="status" :aria-label="badgeText">
         <span class="c-header__badge-dot">
