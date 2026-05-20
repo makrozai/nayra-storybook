@@ -3,7 +3,7 @@ import CounterControls from '../CounterControls/CounterControls.vue'
 import type { InteractiveCounterProps, InteractiveCounterEmits } from './types'
 import { useCounter } from './useCounter'
 
-defineOptions({ name: 'NaInteractiveCounter' })
+defineOptions({ name: 'InteractiveCounter' })
 
 /**
  * @component InteractiveCounter

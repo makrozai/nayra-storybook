@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HeaderProps } from './types'
 
-defineOptions({ name: 'NaHeader' })
+defineOptions({ name: 'Header' })
 
 /**
  * @component Header

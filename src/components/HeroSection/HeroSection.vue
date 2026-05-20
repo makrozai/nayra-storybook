@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HeroSectionProps } from './types'
 
-defineOptions({ name: 'NaHeroSection' })
+defineOptions({ name: 'HeroSection' })
 
 /**
  * @component HeroSection
