@@ -61,6 +61,7 @@ Se ejecuta en cada push a `master` (tras el merge del PR de release):
 
 ```
 push a master
+  └─ verificar deduplicación de lockfile (pnpm dedupe --check)
   └─ pnpm install --frozen-lockfile
   └─ pnpm lint
   └─ pnpm test
