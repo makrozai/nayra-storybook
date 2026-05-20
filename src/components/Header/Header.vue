@@ -35,14 +35,14 @@ defineProps<HeaderProps>()
       <!-- Estatus de Pruebas Unitarias -->
       <div class="c-header__badge" role="status" :aria-label="badgeText">
         <span class="c-header__badge-dot">
-          <span class="c-header__badge-dot-ping" />
-          <span class="c-header__badge-dot-core" />
+          <span class="c-header__badge-dot-ping"></span>
+          <span class="c-header__badge-dot-core"></span>
         </span>
         <span class="c-header__badge-text">{{ badgeText }}</span>
       </div>
 
       <!-- Slot opcional para acciones de usuario (ej. cambiar tema) -->
-      <slot name="actions" />
+      <slot name="actions"></slot>
     </div>
   </header>
 </template>

@@ -28,7 +28,7 @@ defineProps<HeroSectionProps>()
     </p>
     
     <!-- Ranura para inyectar la lista de features dinámicas -->
-    <slot />
+    <slot></slot>
   </section>
 </template>
 

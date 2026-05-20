@@ -1,4 +1,5 @@
 import { shallowRef, watch } from 'vue'
+import type { Component } from 'vue'
 import type { IconProps } from './types'
 
 // Indexado estático de módulos SVG locales en la librería
@@ -8,7 +9,7 @@ const svgModules = import.meta.glob('/src/assets/icons/**/*.svg', { query: '?com
  * Hook para cargar dinámicamente iconos SVG de forma asíncrona.
  */
 export function useIconLoader(props: IconProps) {
-  const SvgComponent = shallowRef<any>(null)
+  const SvgComponent = shallowRef<Component | null>(null)
   const activeType = shallowRef<string>(props.type || 'solid')
 
   /**
@@ -45,8 +46,8 @@ export function useIconLoader(props: IconProps) {
         const match = getSvgLoader(type as string, icon as string)
         if (match) {
           try {
-            const module: any = await match.loader()
-            SvgComponent.value = module.default || module
+            const module = await match.loader() as { default?: Component }
+            SvgComponent.value = module.default ?? (module as unknown as Component)
             activeType.value = match.resolvedType
           } catch (err) {
             console.error(`Failed to load SVG icon: ${icon}`, err)

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Icon from './Icon.vue'
+import IconGallery from './IconGallery.vue'
 
 const meta = {
   title: 'Atoms/Icon',
@@ -163,5 +164,21 @@ export const Transformations: Story = {
     icon: 'arrow-right',
     rotate: 90,
     size: 32
+  }
+}
+
+export const Gallery: Story = {
+  name: 'Galería de Iconos Locales',
+  render: () => ({
+    components: { IconGallery },
+    template: `<IconGallery />`
+  }),
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Lista interactiva de todos los iconos SVG locales disponibles en la librería. Usa el buscador para filtrar por nombre. Cada icono muestra su nombre (para usarlo en `icon="..."`) y las variantes disponibles.'
+      }
+    }
   }
 }
