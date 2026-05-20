@@ -3,6 +3,7 @@ import type { Preview } from '@storybook/vue3'
 import { NayraUI } from '../src/index'
 import { useNayraTheme } from '../src/composables/useNayraTheme'
 import { nayraConfig } from '../src/config'
+import { componentRegistry } from '../src/registry'
 import { addons } from '@storybook/preview-api'
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode'
 import { themes } from '@storybook/theming'
@@ -90,12 +91,8 @@ const preview: Preview = {
       source: {
         transform: (src: string) => {
           const prefix = nayraConfig.prefix
-          const names = [
-            'Button', 'Icon', 'Header', 'Footer',
-            'HeroSection', 'FeatureCard', 'InteractiveCounter', 'CounterControls'
-          ]
           let result = src
-          for (const name of names) {
+          for (const name of Object.keys(componentRegistry)) {
             result = result.replaceAll(`<${name}`, `<${prefix}${name}`)
             result = result.replaceAll(`</${name}>`, `</${prefix}${name}>`)
           }

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import type { IconProps } from './types'
 import { useIconLoader } from './useIconLoader'
 
-defineOptions({ name: 'NaIcon' })
+defineOptions({ name: 'Icon' })
 
 const props = withDefaults(defineProps<IconProps>(), {
   source: 'font',

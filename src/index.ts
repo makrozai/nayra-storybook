@@ -1,46 +1,34 @@
 import type { App, Plugin } from 'vue'
 import { nayraConfig } from './config'
-import Button from './components/Button/Button.vue'
-import Icon from './components/Icon/Icon.vue'
-import Header from './components/Header/Header.vue'
-import Footer from './components/Footer/Footer.vue'
-import HeroSection from './components/HeroSection/HeroSection.vue'
-import FeatureCard from './components/FeatureCard/FeatureCard.vue'
-import InteractiveCounter from './components/InteractiveCounter/InteractiveCounter.vue'
-import CounterControls from './components/CounterControls/CounterControls.vue'
+import { componentRegistry } from './registry'
 import { useNayraTheme } from './composables/useNayraTheme'
 
-// Objeto de componentes para registro global automático
-const components = {
-  Button,
-  Icon,
-  Header,
-  Footer,
-  HeroSection,
-  FeatureCard,
-  InteractiveCounter,
-  CounterControls
+export interface NayraUIOptions {
+  theme?: 'light' | 'dark' | 'auto'
+  prefix?: string
 }
 
-export const NayraUI: Plugin = {
-  install(app: App, options: { theme?: 'light' | 'dark' | 'auto'; prefix?: string } = {}) {
-    const initialTheme = options.theme || 'auto'
+export const NayraUI: Plugin<[NayraUIOptions?]> = {
+  install(app: App, options: NayraUIOptions = {}) {
     const prefix = options.prefix ?? 'Na'
     nayraConfig.prefix = prefix
 
-    // Registrar componentes globalmente con el prefijo configurado (por defecto 'Na')
-    for (const [name, component] of Object.entries(components)) {
+    for (const [name, component] of Object.entries(componentRegistry)) {
       app.component(`${prefix}${name}`, component)
     }
 
-    // Inicializar tema
     const { initTheme } = useNayraTheme()
-    initTheme(initialTheme)
+    initTheme(options.theme ?? 'auto')
   }
 }
 
-// Exportar componentes de manera individual, composables y config
-export {
+export { componentRegistry } from './registry'
+export type { NayraComponentName } from './registry'
+export { nayraConfig } from './config'
+export type { NayraConfig } from './config'
+export { useNayraTheme } from './composables/useNayraTheme'
+
+export const {
   Button,
   Icon,
   Header,
@@ -49,6 +37,4 @@ export {
   FeatureCard,
   InteractiveCounter,
   CounterControls,
-  useNayraTheme,
-  nayraConfig
-}
+} = componentRegistry
