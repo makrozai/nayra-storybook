@@ -73,6 +73,25 @@ push a master
        └─ si existe    → skip (previene E409)
 ```
 
+### `pr-develop-validation.yml` — Validación completa de PR a `develop`
+
+Se ejecuta automáticamente en la creación, actualización o reapertura de cualquier PR hacia `develop`:
+
+```
+PR a develop
+  ├─ verificar deduplicación de dependencias (pnpm dedupe --check)
+  ├─ pnpm install --frozen-lockfile
+  ├─ pnpm lint
+  ├─ pnpm test (Vitest)
+  ├─ pnpm build (Librería)
+  ├─ pnpm storybook:build
+  ├─ instalar browsers de Playwright
+  └─ pnpm test:e2e (Pruebas E2E)
+```
+
+* **Reporte de Fallos:** Si las pruebas E2E fallan, se genera y carga un reporte interactivo en formato HTML (`playwright-report/`) como artefacto del run para depuración inmediata (retención de 14 días).
+* **Previsualización (Review Artifacts):** Sube la librería compilada (`dist/`) y el Storybook estático (`storybook-static/`) como artefactos descargables (retención de 7 días) para que los revisores validen el empaquetado y diseño visual.
+
 ### `dependency-review.yml` — Auditoría de dependencias
 
 Se ejecuta en cada PR hacia `develop` y `master`. Escanea `pnpm-lock.yaml` en busca de CVEs y bloquea el merge si detecta paquetes inseguros, comentando automáticamente el reporte en el PR para visibilizar vulnerabilidades de forma temprana.
