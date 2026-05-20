@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FooterProps } from './types'
 
-defineOptions({ name: 'NaFooter' })
+defineOptions({ name: 'Footer' })
 /**
  * @component Footer
  * @description Pie de página que contiene información de copyright y enlaces de interés.

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FeatureCardProps } from './types'
 
-defineOptions({ name: 'NaFeatureCard' })
+defineOptions({ name: 'FeatureCard' })
 
 /**
  * @component FeatureCard

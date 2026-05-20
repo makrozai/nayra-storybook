@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { ButtonProps, ButtonEmits } from './types'
 
-defineOptions({ name: 'NaButton' })
+defineOptions({ name: 'Button' })
 
 /**
  * @component Button
