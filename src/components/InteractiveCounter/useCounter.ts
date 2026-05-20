@@ -1,10 +1,10 @@
 import { ref, computed, watch } from 'vue'
 
-export function useCounter(initialValue: number, emit: (event: 'change', value: number) => void) {
-  const count = ref<number>(initialValue)
+export function useCounter(getInitialValue: () => number, emit: (event: 'change', value: number) => void) {
+  const count = ref<number>(getInitialValue())
 
   // Sincronizar valor si el prop cambia externamente
-  watch(() => initialValue, (newVal) => {
+  watch(getInitialValue, (newVal) => {
     count.value = newVal
   })
 
@@ -35,7 +35,7 @@ export function useCounter(initialValue: number, emit: (event: 'change', value: 
   }
 
   const handleReset = (): void => {
-    count.value = initialValue
+    count.value = getInitialValue()
     emit('change', count.value)
   }
 

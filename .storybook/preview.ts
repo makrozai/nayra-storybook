@@ -7,9 +7,12 @@ import { componentRegistry } from '../src/registry'
 import { addons } from '@storybook/preview-api'
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode'
 import { themes } from '@storybook/theming'
+import type { DocsContainerProps } from '@storybook/blocks'
+import type { PropsWithChildren } from 'react'
 import React, { useEffect, useState } from 'react'
 import { DocsContainer as BaseDocsContainer } from '@storybook/blocks'
 import '../src/assets/css/main.css'
+import './preview.css'
 
 setup((app) => {
   // Inicializar la UI de Nayra con el tema por defecto (oscuro) y registrar todos los componentes
@@ -30,10 +33,10 @@ const getInitialDarkMode = (): boolean => {
           return data.current === 'dark'
         }
       }
-    } catch (e) {}
+    } catch (_e) {}
     try {
       return window.matchMedia('(prefers-color-scheme: dark)').matches
-    } catch (e) {}
+    } catch (_e) {}
   }
   return false
 }
@@ -42,25 +45,13 @@ const getInitialDarkMode = (): boolean => {
 const initialDark = getInitialDarkMode()
 useNayraTheme().setTheme(initialDark ? 'dark' : 'light')
 
-if (typeof document !== 'undefined') {
-  // Inyectar estilo para forzar el fondo transparente en el body dentro de Storybook
-  // De esta manera se usa el fondo por defecto del layout de Storybook (Canvas) sin sobreescribirlo con el dark blue de la app
-  const style = document.createElement('style')
-  style.innerHTML = `
-    body.sb-show-main, body.sb-body {
-      background-color: transparent !important;
-    }
-  `
-  document.head.appendChild(style)
-}
-
 // Sincronizar el tema cuando cambie dinámicamente desde el toolbar de Storybook
 channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
   useNayraTheme().setTheme(isDark ? 'dark' : 'light')
 })
 
 // Contenedor personalizado de Docs para cambiar el tema dinámicamente
-export const CustomDocsContainer = ({ children, context }: any) => {
+export const CustomDocsContainer = ({ children, context }: PropsWithChildren<DocsContainerProps>) => {
   const [isDark, setIsDark] = useState(getInitialDarkMode())
 
   useEffect(() => {
@@ -81,10 +72,12 @@ export const CustomDocsContainer = ({ children, context }: any) => {
 const preview: Preview = {
   parameters: {
     layout: 'centered',
+    backgrounds: { disable: true },
     darkMode: {
       dark: themes.dark,
       light: themes.normal,
-      current: 'system' // Seguir la preferencia del sistema por defecto
+      stylePreview: true,
+      current: 'system',
     },
     docs: {
       container: CustomDocsContainer,

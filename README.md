@@ -31,6 +31,9 @@ Proporciona un sistema de diseño agnóstico centralizado, preparado para implem
 | Vite | ^5.2.0 | Build tool y servidor de desarrollo |
 | Storybook | ^8.6.18 | Documentación visual interactiva |
 | storybook-dark-mode | ^4.0.2 | Toggle de tema en Storybook |
+| Vitest | ^2.1.9 | Tests unitarios y de componentes |
+| Playwright | ^1.60.0 | Tests E2E sobre Storybook |
+| ESLint | ^10.4.0 | Linting con flat config + TypeScript + Vue |
 | vite-svg-loader | ^5.1.1 | Importación de SVGs como componentes Vue |
 | FontAwesome Free | ^7.2.0 | Iconos de fuente |
 
@@ -40,47 +43,87 @@ Proporciona un sistema de diseño agnóstico centralizado, preparado para implem
 
 La librería impone reglas estrictas para garantizar escalabilidad y coherencia a largo plazo.
 
-### 1. Prefijo unificado `Na`
+### 1. Registry como única fuente de verdad
 
-Todos los componentes registrados globalmente llevan el prefijo `Na` (ej. `<NaButton>`, `<NaHeader>`). Internamente, en `src/components/`, los archivos omiten el prefijo (ej. `Button.vue`) pero lo declaran explícitamente con la macro:
+Todos los componentes se declaran en `src/registry.ts`. El plugin, los tipos exportados y el transform de Storybook derivan de ahí automáticamente. **Añadir un componente nuevo es una sola línea.**
 
 ```ts
-defineOptions({ name: 'NaButton' })
+// src/registry.ts
+export const componentRegistry = {
+  Button,
+  Icon,
+  Header,
+  // → añadir aquí y queda disponible en todo el sistema
+} as const satisfies Record<string, Component>
+
+export type NayraComponentName = keyof typeof componentRegistry
 ```
 
-### 2. Modularización de tipos
+### 2. Prefijo unificado `Na` — responsabilidad exclusiva del plugin
+
+El prefijo `Na` es una decisión de **registro**, no de componente. Los componentes declaran su nombre intrínseco (sin prefijo) y el plugin decide cómo registrarlos:
+
+```ts
+// Button.vue — nombre intrínseco
+defineOptions({ name: 'Button' })
+
+// index.ts — el plugin aplica el prefijo
+for (const [name, component] of Object.entries(componentRegistry)) {
+  app.component(`${prefix}${name}`, component) // → NaButton, NaIcon…
+}
+```
+
+El prefijo es configurable al instalar el plugin (ver [Instalación y configuración](#instalación-y-configuración)).
+
+### 3. Modularización de tipos
 
 Las interfaces de Props y Emits **nunca** residen dentro del `.vue`. Cada componente tiene su propio `types.ts`:
 
 ```
 Button/
-├── Button.vue       ← solo template + binding
+├── Button.vue         ← solo template + binding
 ├── Button.stories.ts
 ├── Button.css
-└── types.ts         ← ButtonProps, ButtonEmits
+└── types.ts           ← ButtonProps, ButtonEmits
 ```
 
-### 3. Composables para lógica compleja
+### 4. Composables para lógica compleja
 
 La lógica reactiva, asíncrona o de estado profundo se externaliza en composables locales:
 
 ```
 Icon/
 ├── Icon.vue
-└── useIconLoader.ts   ← lógica de carga SVG/font
+├── useIconLoader.ts   ← carga dinámica SVG/font
+└── useIconGallery.ts  ← catálogo reactivo de iconos locales
 
 InteractiveCounter/
 ├── InteractiveCounter.vue
-└── useCounter.ts      ← lógica del contador
+└── useCounter.ts      ← lógica reactiva del contador
 ```
 
-### 4. Diseño Atómico
+### 5. Diseño Atómico
 
 | Nivel | Componentes |
 |---|---|
 | Átomos | `Button`, `Icon` |
 | Moléculas | `CounterControls`, `FeatureCard` |
 | Organismos | `Header`, `Footer`, `HeroSection`, `InteractiveCounter` |
+
+### 6. Añadir un componente nuevo (zero friction)
+
+```
+1. Crear src/components/MiNuevo/MiNuevo.vue
+   → defineOptions({ name: 'MiNuevo' })   ← SIN prefijo
+
+2. Añadir a src/registry.ts:
+   import MiNuevo from './components/MiNuevo/MiNuevo.vue'
+   export const componentRegistry = { ...existentes, MiNuevo }
+
+3. El plugin lo registra como <NaMiNuevo> automáticamente
+4. El source transform de Storybook lo incluye automáticamente
+5. La story puede usar <NaMiNuevo> sin ningún import adicional
+```
 
 ---
 
@@ -110,6 +153,20 @@ const app = createApp(App)
 app.use(NayraUI, { theme: 'auto' })
 
 app.mount('#app')
+```
+
+El plugin `NayraUI` acepta las siguientes opciones:
+
+| Opción | Tipo | Default | Descripción |
+|---|---|---|---|
+| `theme` | `'auto' \| 'light' \| 'dark'` | `'auto'` | Tema inicial de la aplicación |
+| `prefix` | `string` | `'Na'` | Prefijo para el registro global de componentes |
+
+**Ejemplo con prefijo personalizado:**
+
+```typescript
+// Los componentes quedan disponibles como <MiButton>, <MiIcon>…
+app.use(NayraUI, { theme: 'dark', prefix: 'Mi' })
 ```
 
 El plugin `NayraUI` recibe una opción `theme`:
@@ -146,6 +203,8 @@ El tema se aplica mediante el atributo `data-nayra-theme` en la etiqueta `<html>
 
 El composable `useNayraTheme` implementa un **singleton a nivel de módulo** (una única fuente de verdad para toda la app). El `ref` reactivo `activeTheme` permanece sincronizado tanto con el DOM como con cualquier cambio externo (Storybook toolbar, llamadas a `setTheme`).
 
+Cuando se llama a `setTheme` manualmente, el listener de `prefers-color-scheme` se elimina automáticamente para que el override del usuario prevalezca sobre el sistema operativo.
+
 ---
 
 ## API de componentes
@@ -164,16 +223,16 @@ Botón de acción con variantes visuales y semánticas.
 
 | Prop | Tipo | Default | Descripción |
 |---|---|---|---|
-| `label` | `string` | — | Texto visible dentro del botón |
+| `label` | `string` | `''` | Texto visible dentro del botón |
 | `variant` | `'decrement' \| 'reset' \| 'increment'` | `'reset'` | Variante visual que define colores de foco y hover |
 | `disabled` | `boolean` | `false` | Desactiva el botón |
-| `ariaLabel` | `string` | — | Etiqueta para lectores de pantalla |
+| `ariaLabel` | `string` | — | Etiqueta para lectores de pantalla. Si se omite, usa `label` como fallback |
 
 **Emits**
 
 | Evento | Payload | Descripción |
 |---|---|---|
-| `click` | — | Emitido al hacer clic |
+| `click` | — | Emitido al hacer clic o al activar con teclado (Enter / Space nativos) |
 
 **Ejemplo**
 
@@ -182,6 +241,11 @@ Botón de acción con variantes visuales y semánticas.
   <NaButton label="Guardar" variant="increment" @click="handleSave" />
   <NaButton label="Cancelar" variant="decrement" @click="handleCancel" />
   <NaButton label="Restablecer" variant="reset" @click="handleReset" />
+
+  <!-- Con aria-label explícito (cuando label no es suficientemente descriptivo) -->
+  <NaButton variant="increment" ariaLabel="Incrementar contador de pasajeros" @click="increment">
+    <template #icon><PlusIcon /></template>
+  </NaButton>
 </template>
 ```
 
@@ -210,11 +274,60 @@ Renderiza iconos desde FontAwesome o desde SVGs locales como componentes Vue.
   <NaIcon source="font" icon="house" type="solid" :size="20" />
 
   <!-- Icono SVG local -->
-  <NaIcon source="svg" icon="logo" type="brands" :size="32" ariaLabel="Logo de Nayra" />
+  <NaIcon source="svg" icon="custom-star" type="solid" :size="32" ariaLabel="Estrella" />
+
+  <!-- Icono SVG colorido (preserva colores originales) -->
+  <NaIcon source="svg" icon="tech-vue" type="colorful" :size="40" />
 
   <!-- Con rotación -->
   <NaIcon source="font" icon="arrow-right" :rotate="90" />
 </template>
+```
+
+#### Iconos SVG locales disponibles
+
+Los iconos locales se almacenan en `src/assets/icons/{variante}/{nombre}.svg`. La librería incluye los siguientes iconos de fábrica:
+
+| Nombre | Variantes disponibles | Uso |
+|---|---|---|
+| `custom-star` | `solid`, `regular` | `<NaIcon source="svg" icon="custom-star" type="solid" />` |
+| `tech-vue` | `colorful` | `<NaIcon source="svg" icon="tech-vue" type="colorful" />` |
+
+**Resolución automática de variantes:** Si solicitas una variante que no existe para un icono, el componente resuelve automáticamente a la primera variante disponible (orden: `solid` → `regular` → `brands` → `colorful`).
+
+#### Agregar nuevos iconos SVG
+
+Coloca el archivo `.svg` en el directorio correspondiente a su variante:
+
+```
+src/assets/icons/
+  solid/         ← íconos monocromáticos rellenos (usan currentColor)
+  regular/       ← íconos monocromáticos de contorno (usan currentColor)
+  brands/        ← íconos de marcas (usan currentColor)
+  colorful/      ← íconos multicolor (preservan sus colores originales)
+```
+
+El catálogo se actualiza automáticamente — no es necesario modificar ningún archivo de configuración.
+
+#### Galería interactiva en Storybook
+
+El componente `IconGallery` lista todos los SVGs locales disponibles con su nombre y variantes. Incluye un buscador en tiempo real para encontrar iconos por nombre.
+
+```
+pnpm storybook
+# Navegar a: Atoms → Icon → Galería de Iconos Locales
+```
+
+La galería usa el composable `useIconGallery`, que también puede usarse de forma independiente:
+
+```ts
+import { useIconGallery } from 'nayra-storybook'
+
+const { icons, query, filtered, total } = useIconGallery()
+// icons    → todos los iconos locales (nombre + variantes)
+// query    → ref reactivo para el término de búsqueda
+// filtered → computed filtrado por query
+// total    → número total de iconos
 ```
 
 ---
@@ -298,7 +411,7 @@ Sección hero con título, palabra destacada, descripción y badge de versión.
 
 ### `NaFeatureCard`
 
-Tarjeta de característica con icono, título y descripción.
+Tarjeta de característica con icono, título y descripción. El color del icono se especifica mediante un nombre semántico — el componente gestiona internamente el mapeo a clases CSS.
 
 **Props**
 
@@ -306,7 +419,13 @@ Tarjeta de característica con icono, título y descripción.
 |---|---|---|
 | `title` | `string` | Título de la feature (requerido) |
 | `description` | `string` | Descripción de la feature (requerido) |
-| `iconColorClass` | `string` | Clase CSS de color para el icono (requerido) |
+| `color` | `FeatureCardColor` | Color semántico del icono (requerido) |
+
+**`FeatureCardColor`**
+
+```ts
+type FeatureCardColor = 'indigo' | 'purple' | 'pink' | 'teal' | 'amber' | 'emerald' | 'rose' | 'sky'
+```
 
 **Ejemplo**
 
@@ -315,7 +434,12 @@ Tarjeta de característica con icono, título y descripción.
   <NaFeatureCard
     title="Accesible"
     description="Componentes con atributos aria y soporte de lectores de pantalla"
-    iconColorClass="text-indigo-500"
+    color="indigo"
+  />
+  <NaFeatureCard
+    title="Tipado"
+    description="API completamente tipada con TypeScript estricto"
+    color="teal"
   />
 </template>
 ```
@@ -357,6 +481,8 @@ import { ref } from 'vue'
 const passengers = ref(5)
 </script>
 ```
+
+El contador es **reactivo al prop `initialValue`**: si el padre actualiza el valor, el contador se reinicia automáticamente.
 
 ---
 
@@ -408,14 +534,18 @@ const { theme, setTheme, initTheme } = useNayraTheme()
 | Propiedad | Tipo | Descripción |
 |---|---|---|
 | `theme` | `Ref<'light' \| 'dark'>` | Estado reactivo del tema actual |
-| `setTheme` | `(theme: 'light' \| 'dark') => void` | Cambia el tema y actualiza el DOM |
+| `setTheme` | `(theme: 'light' \| 'dark') => void` | Cambia el tema y desactiva el listener de sistema |
 | `initTheme` | `(initialTheme?: 'light' \| 'dark' \| 'auto') => void` | Inicializa el tema con detección de sistema |
 
 ### Comportamiento de `initTheme`
 
 1. Si `data-nayra-theme` ya existe en `<html>` (ej. SSR, pre-render, Storybook), lo respeta y sincroniza el `ref` con ese valor.
-2. Si `initialTheme === 'auto'`, detecta `prefers-color-scheme` y registra un listener para cambios de sistema operativo.
-3. Si `initialTheme === 'light' | 'dark'`, aplica ese valor y elimina el listener de sistema si existía.
+2. Si `initialTheme === 'auto'`, detecta `prefers-color-scheme` y registra un listener para cambios del sistema operativo.
+3. Si `initialTheme === 'light' | 'dark'`, aplica ese valor directamente.
+
+### Comportamiento de `setTheme`
+
+Cuando se llama manualmente, elimina el listener de `prefers-color-scheme` activo (si existía). El override del usuario prevalece sobre el modo automático hasta que se vuelva a llamar a `initTheme('auto')`.
 
 ### Ejemplo: toggle de tema
 
@@ -503,24 +633,85 @@ git clone https://github.com/makrozai/nayra-storybook.git
 cd nayra-storybook
 
 # Instalar dependencias
-npm install
+pnpm install
 
 # Iniciar Storybook (puerto 6006)
-npm run storybook
+pnpm storybook
 ```
 
 ### Scripts disponibles
 
 | Script | Descripción |
 |---|---|
-| `npm run dev` | Servidor de desarrollo Vite |
-| `npm run build` | Compila la librería + genera tipos `.d.ts` |
-| `npm run storybook` | Storybook en modo desarrollo (puerto 6006) |
-| `npm run storybook:build` | Build estático de Storybook |
+| `pnpm dev` | Servidor de desarrollo Vite |
+| `pnpm build` | Compila la librería + genera tipos `.d.ts` |
+| `pnpm storybook` | Storybook en modo desarrollo (puerto 6006) |
+| `pnpm storybook:build` | Build estático de Storybook |
+| `pnpm test` | Ejecuta los tests unitarios con Vitest |
+| `pnpm test:watch` | Tests en modo watch (desarrollo) |
+| `pnpm test:coverage` | Tests con reporte de cobertura |
+| `pnpm test:e2e` | Tests E2E con Playwright (requiere Storybook en :6006) |
+| `pnpm lint` | Analiza el código con ESLint |
+| `pnpm lint:fix` | Corrige automáticamente problemas de lint |
+
+### Tests
+
+El proyecto usa **Vitest** para tests unitarios y de componentes, y **Playwright** para E2E.
+
+```bash
+# Tests unitarios (rápido, sin browser)
+pnpm test
+
+# Tests con cobertura
+pnpm test:coverage
+
+# Tests E2E (requiere Storybook corriendo)
+pnpm storybook &   # en una terminal
+pnpm test:e2e      # en otra terminal
+```
+
+La suite actual cubre **124 tests unitarios** distribuidos en todos los componentes y composables:
+
+| Ámbito | Archivo de tests | Tests |
+|---|---|---|
+| `Button` | `Button.spec.ts` | 15 |
+| `Icon Gallery` | `IconGallery.spec.ts` | 14 |
+| `useIconGallery` | `useIconGallery.spec.ts` | 12 |
+| `InteractiveCounter` | `InteractiveCounter.spec.ts` | 14 |
+| `useCounter` | `useCounter.spec.ts` | 15 |
+| `CounterControls` | `CounterControls.spec.ts` | 9 |
+| `FeatureCard` | `FeatureCard.spec.ts` | 12 |
+| `Footer` | `Footer.spec.ts` | 10 |
+| `Header` | `Header.spec.ts` | 8 |
+| `HeroSection` | `HeroSection.spec.ts` | 7 |
+| `useNayraTheme` | `useNayraTheme.spec.ts` | 8 |
+
+Los tests unitarios se encuentran en `src/components/**/__tests__/` y `src/composables/__tests__/`. Los tests E2E en `e2e/`.
+
+### Linting
+
+El proyecto usa ESLint con **flat config** y soporte nativo para TypeScript y Vue SFCs:
+
+```bash
+# Comprobar
+pnpm lint
+
+# Corregir automáticamente
+pnpm lint:fix
+```
+
+La configuración (`eslint.config.mjs`) aplica:
+- `@typescript-eslint` con reglas estrictas para `.ts` y `.vue`
+- `eslint-plugin-vue` con `flat/recommended` + reglas alineadas al design system
+- Exclusión automática de `dist/`, stories, tests y configs
 
 ---
 
 ## Integración con Storybook
+
+### Fondo del canvas y modo oscuro
+
+El canvas usa los colores neutros por defecto de Storybook (`#F8F8F8` light · `#333333` dark), gestionados mediante la clase `dark`/`light` que `storybook-dark-mode` aplica al body del iframe (`stylePreview: true`). Los tokens de los componentes se sincronizan por separado vía `data-nayra-theme` en `<html>`. Ambos sistemas operan en paralelo sin interferirse.
 
 ### Arquitectura de la integración
 
@@ -547,9 +738,13 @@ Usuario cambia toolbar
             └─ DOM                         ✅
 ```
 
+### Source transform automático
+
+El panel **Show Code** de Storybook muestra los nombres de componentes con el prefijo `Na` (ej. `<NaButton>`) en lugar de los nombres internos. Este transform se deriva automáticamente del `componentRegistry`, por lo que cualquier componente nuevo añadido al registry queda incluido sin configuración adicional.
+
 ### Añadir stories
 
-Las stories siguen el patrón estándar de Storybook + CSF3. Ninguna story necesita gestionar el tema directamente: el preview global lo maneja.
+Las stories siguen el patrón estándar de Storybook + CSF3. Ninguna story necesita gestionar el tema ni importar configuración de prefijos directamente: el preview global lo maneja.
 
 ```ts
 // src/components/MiComponente/MiComponente.stories.ts
@@ -586,10 +781,39 @@ dist/
 ```
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Vue se excluye del bundle (peer dependency). Los consumidores deben tener Vue 3.5+ instalado.
+
+### Tipos exportados
+
+Todos los tipos de la API pública están disponibles para importación directa:
+
+```ts
+import type {
+  // Plugin
+  NayraUIOptions,          // opciones del plugin (theme, prefix)
+  NayraComponentName,      // 'Button' | 'Icon' | 'Header' | …
+  NayraConfig,             // { prefix: string }
+
+  // Tema
+  ThemeValue,              // 'light' | 'dark'
+
+  // Props de componentes
+  ButtonProps, ButtonEmits,
+  IconProps,
+  HeaderProps,
+  FooterProps,
+  HeroSectionProps,
+  FeatureCardProps, FeatureCardColor,
+  InteractiveCounterProps, InteractiveCounterEmits,
+  CounterControlsProps, CounterControlsEmits,
+
+  // Galería de iconos
+  IconEntry, IconVariant, UseIconGalleryReturn,
+} from 'nayra-storybook'
+```
 
 ### Alias de paths
 

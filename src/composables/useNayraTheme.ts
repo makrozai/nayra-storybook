@@ -5,7 +5,7 @@ import type { Ref } from 'vue'
 const activeTheme = ref<'light' | 'dark'>('dark')
 let mediaQueryList: MediaQueryList | null = null
 
-type ThemeValue = 'light' | 'dark'
+export type ThemeValue = 'light' | 'dark'
 
 type UseNayraThemeReturn = {
   theme: Ref<ThemeValue>
@@ -14,7 +14,8 @@ type UseNayraThemeReturn = {
 }
 
 export const useNayraTheme = (): UseNayraThemeReturn => {
-  const setTheme = (theme: ThemeValue) => {
+  // Aplica el tema sin tocar el listener de mediaQuery (uso interno)
+  const applyTheme = (theme: ThemeValue) => {
     activeTheme.value = theme
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-nayra-theme', theme)
@@ -22,7 +23,16 @@ export const useNayraTheme = (): UseNayraThemeReturn => {
   }
 
   const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-    setTheme(e.matches ? 'dark' : 'light')
+    applyTheme(e.matches ? 'dark' : 'light')
+  }
+
+  // setTheme público: detiene el modo auto y aplica el tema manualmente
+  const setTheme = (theme: ThemeValue) => {
+    if (mediaQueryList) {
+      mediaQueryList.removeEventListener('change', handleSystemThemeChange)
+      mediaQueryList = null
+    }
+    applyTheme(theme)
   }
 
   const initTheme = (initialTheme: ThemeValue | 'auto' = 'auto') => {
@@ -30,21 +40,18 @@ export const useNayraTheme = (): UseNayraThemeReturn => {
     if (typeof document !== 'undefined') {
       const existing = document.documentElement.getAttribute('data-nayra-theme')
       if (existing === 'light' || existing === 'dark') {
-        setTheme(existing)
+        applyTheme(existing)
         return
       }
     }
 
     if (initialTheme === 'auto' && typeof document !== 'undefined') {
       mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
-      setTheme(mediaQueryList.matches ? 'dark' : 'light')
+      applyTheme(mediaQueryList.matches ? 'dark' : 'light')
       mediaQueryList.removeEventListener('change', handleSystemThemeChange)
       mediaQueryList.addEventListener('change', handleSystemThemeChange)
     } else if (initialTheme === 'light' || initialTheme === 'dark') {
       setTheme(initialTheme)
-      if (mediaQueryList) {
-        mediaQueryList.removeEventListener('change', handleSystemThemeChange)
-      }
     }
   }
 
