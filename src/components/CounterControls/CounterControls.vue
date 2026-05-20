@@ -2,7 +2,7 @@
 import Button from '../Button/Button.vue'
 import type { CounterControlsProps, CounterControlsEmits } from './types'
 
-defineOptions({ name: 'NaCounterControls' })
+defineOptions({ name: 'CounterControls' })
 
 /**
  * @component CounterControls
