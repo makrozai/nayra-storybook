@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Icon from './Icon.vue'
+import { nayraConfig } from '~/config'
 
 const meta = {
   title: 'Atoms/Icon',
@@ -95,22 +96,23 @@ export const SvgLocalRegular: Story = {
 }
 
 export const SvgLocalColorful: Story = {
-  render: (args) => ({
-    components: { Icon },
-    setup() {
-      return { args }
-    },
-    template: `
-      <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px dashed #ccc; padding: 16px; border-radius: 8px;">
-        <div style="font-size: 24px; color: #ff0000; display: flex; align-items: center; gap: 8px;">
-          <NaIcon v-bind="args" />
-          <span style="font-size: 16px; color: #666;">
-            Preserva sus colores nativos (verde y azul) sin heredar el color rojo del padre
-          </span>
+  render: (args) => {
+    const tag = `${nayraConfig.prefix}Icon`
+    return {
+      components: { [tag]: Icon },
+      setup() { return { args } },
+      template: `
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px dashed #ccc; padding: 16px; border-radius: 8px;">
+          <div style="font-size: 24px; color: #ff0000; display: flex; align-items: center; gap: 8px;">
+            <${tag} v-bind="args" />
+            <span style="font-size: 16px; color: #666;">
+              Preserva sus colores nativos (verde y azul) sin heredar el color rojo del padre
+            </span>
+          </div>
         </div>
-      </div>
-    `
-  }),
+      `
+    }
+  },
   args: {
     source: 'svg',
     icon: 'tech-vue',
@@ -120,25 +122,26 @@ export const SvgLocalColorful: Story = {
 }
 
 export const VariantFallback: Story = {
-  render: (args) => ({
-    components: { Icon },
-    setup() {
-      return { args }
-    },
-    template: `
-      <div style="display: flex; flex-direction: column; gap: 12px; border: 1px dashed #ccc; padding: 16px; border-radius: 8px;">
-        <p style="font-size: 14px; margin: 0; color: #666;">
-          <strong>Caso:</strong> Se solicita variante <code>brands</code> del icono <code>custom-star</code>, la cual NO existe localmente.
-        </p>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <NaIcon v-bind="args" />
-          <span style="font-weight: bold;">
-            ¡Cargado con éxito! Resolvió automáticamente en la variante disponible (solid)
-          </span>
+  render: (args) => {
+    const tag = `${nayraConfig.prefix}Icon`
+    return {
+      components: { [tag]: Icon },
+      setup() { return { args } },
+      template: `
+        <div style="display: flex; flex-direction: column; gap: 12px; border: 1px dashed #ccc; padding: 16px; border-radius: 8px;">
+          <p style="font-size: 14px; margin: 0; color: #666;">
+            <strong>Caso:</strong> Se solicita variante <code>brands</code> del icono <code>custom-star</code>, la cual NO existe localmente.
+          </p>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <${tag} v-bind="args" />
+            <span style="font-weight: bold;">
+              ¡Cargado con éxito! Resolvió automáticamente en la variante disponible (solid)
+            </span>
+          </div>
         </div>
-      </div>
-    `
-  }),
+      `
+    }
+  },
   args: {
     source: 'svg',
     icon: 'custom-star',
@@ -148,18 +151,19 @@ export const VariantFallback: Story = {
 }
 
 export const SizeInheritanceAndColor: Story = {
-  render: (args) => ({
-    components: { Icon },
-    setup() {
-      return { args }
-    },
-    template: `
-      <div style="font-size: 24px; color: var(--theme-primary, #6366f1); display: flex; align-items: center; gap: 8px;">
-        <NaIcon v-bind="args" />
-        <span style="font-weight: bold;">Heredando color y tamaño de fuente (24px)</span>
-      </div>
-    `
-  }),
+  render: (args) => {
+    const tag = `${nayraConfig.prefix}Icon`
+    return {
+      components: { [tag]: Icon },
+      setup() { return { args } },
+      template: `
+        <div style="font-size: 24px; color: var(--theme-primary, #6366f1); display: flex; align-items: center; gap: 8px;">
+          <${tag} v-bind="args" />
+          <span style="font-weight: bold;">Heredando color y tamaño de fuente (24px)</span>
+        </div>
+      `
+    }
+  },
   args: {
     source: 'font',
     icon: 'bell'
