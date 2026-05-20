@@ -709,6 +709,10 @@ La configuración (`eslint.config.mjs`) aplica:
 
 ## Integración con Storybook
 
+### Fondo del canvas y modo oscuro
+
+El canvas usa los colores neutros por defecto de Storybook (`#F8F8F8` light · `#333333` dark), gestionados mediante la clase `dark`/`light` que `storybook-dark-mode` aplica al body del iframe (`stylePreview: true`). Los tokens de los componentes se sincronizan por separado vía `data-nayra-theme` en `<html>`. Ambos sistemas operan en paralelo sin interferirse.
+
 ### Arquitectura de la integración
 
 La librería usa `storybook-dark-mode` para el toggle de tema en el toolbar. La integración en `.storybook/preview.ts` está diseñada para mantener el ref reactivo `activeTheme` del composable siempre sincronizado con el DOM.
@@ -784,12 +788,30 @@ Vue se excluye del bundle (peer dependency). Los consumidores deben tener Vue 3.
 
 ### Tipos exportados
 
+Todos los tipos de la API pública están disponibles para importación directa:
+
 ```ts
 import type {
-  NayraUIOptions,       // opciones del plugin (theme, prefix)
-  NayraComponentName,   // 'Button' | 'Icon' | 'Header' | …
-  NayraConfig,          // { prefix: string }
-  FeatureCardColor,     // 'indigo' | 'purple' | 'pink' | …
+  // Plugin
+  NayraUIOptions,          // opciones del plugin (theme, prefix)
+  NayraComponentName,      // 'Button' | 'Icon' | 'Header' | …
+  NayraConfig,             // { prefix: string }
+
+  // Tema
+  ThemeValue,              // 'light' | 'dark'
+
+  // Props de componentes
+  ButtonProps, ButtonEmits,
+  IconProps,
+  HeaderProps,
+  FooterProps,
+  HeroSectionProps,
+  FeatureCardProps, FeatureCardColor,
+  InteractiveCounterProps, InteractiveCounterEmits,
+  CounterControlsProps, CounterControlsEmits,
+
+  // Galería de iconos
+  IconEntry, IconVariant, UseIconGalleryReturn,
 } from 'nayra-storybook'
 ```
 

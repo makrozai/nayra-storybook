@@ -99,10 +99,10 @@ export const SvgLocalColorful: Story = {
   render: (args) => ({
     setup() { return { args } },
     template: `
-      <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px dashed #ccc; padding: 16px; border-radius: 8px;">
-        <div style="font-size: 24px; color: #ff0000; display: flex; align-items: center; gap: 8px;">
+      <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px dashed var(--theme-border-base); padding: 16px; border-radius: 8px;">
+        <div style="font-size: 24px; color: var(--theme-error); display: flex; align-items: center; gap: 8px;">
           <NaIcon v-bind="args" />
-          <span style="font-size: 16px; color: #666;">
+          <span style="font-size: 16px; color: var(--theme-content-muted);">
             Preserva sus colores nativos (verde y azul) sin heredar el color rojo del padre
           </span>
         </div>
@@ -121,8 +121,8 @@ export const VariantFallback: Story = {
   render: (args) => ({
     setup() { return { args } },
     template: `
-      <div style="display: flex; flex-direction: column; gap: 12px; border: 1px dashed #ccc; padding: 16px; border-radius: 8px;">
-        <p style="font-size: 14px; margin: 0; color: #666;">
+      <div style="display: flex; flex-direction: column; gap: 12px; border: 1px dashed var(--theme-border-base); padding: 16px; border-radius: 8px;">
+        <p style="font-size: 14px; margin: 0; color: var(--theme-content-muted);">
           <strong>Caso:</strong> Se solicita variante <code>brands</code> del icono <code>custom-star</code>, la cual NO existe localmente.
         </p>
         <div style="display: flex; align-items: center; gap: 8px;">
