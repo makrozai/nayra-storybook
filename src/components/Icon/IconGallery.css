@@ -1,0 +1,49 @@
+@reference "../../assets/css/main.css";
+
+.c-icon-gallery {
+  @apply flex flex-col gap-4 w-full max-w-4xl mx-auto p-6;
+}
+
+.c-icon-gallery__toolbar {
+  @apply flex items-center gap-3;
+}
+
+.c-icon-gallery__search {
+  @apply flex-1 px-3 py-2 rounded-lg border text-sm
+         bg-transparent border-white/20 text-inherit
+         placeholder-white/40 outline-none
+         focus:border-[var(--theme-primary)] transition-colors duration-200;
+}
+
+.c-icon-gallery__count {
+  @apply text-sm text-white/50 shrink-0 tabular-nums;
+}
+
+.c-icon-gallery__grid {
+  @apply grid gap-3 list-none p-0 m-0;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.c-icon-gallery__item {
+  @apply flex flex-col items-center gap-2 p-4 rounded-xl
+         border border-white/10 text-center
+         hover:border-[var(--theme-primary)]/60 hover:bg-white/5
+         transition-colors duration-200 cursor-default;
+}
+
+.c-icon-gallery__name {
+  @apply text-xs font-mono text-white/80 break-all leading-tight;
+}
+
+.c-icon-gallery__variants {
+  @apply flex flex-wrap gap-1 justify-center;
+}
+
+.c-icon-gallery__badge {
+  @apply text-[10px] px-1.5 py-0.5 rounded
+         bg-[var(--theme-primary)]/20 text-[var(--theme-primary)];
+}
+
+.c-icon-gallery__empty {
+  @apply text-sm text-white/40 text-center py-12;
+}

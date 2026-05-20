@@ -17,8 +17,8 @@ defineProps<FooterProps>()
     <p>{{ copyright }}</p>
     <div class="c-footer__links">
       <a
-        v-for="(link, index) in links"
-        :key="index"
+        v-for="link in links"
+        :key="link.url"
         :href="link.url"
         target="_blank"
         rel="noopener noreferrer"

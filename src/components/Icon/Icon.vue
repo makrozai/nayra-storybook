@@ -39,8 +39,8 @@ const fontAwesomeClasses = computed(() => {
       :aria-hidden="!ariaLabel"
     ></i>
     <component 
-      v-else-if="source === 'svg' && SvgComponent"
-      :is="SvgComponent" 
+      :is="SvgComponent"
+      v-else-if="source === 'svg' && SvgComponent" 
       class="c-icon"
       :class="activeType === 'colorful' ? 'c-icon--colorful' : 'c-icon--svg'"
       :aria-label="ariaLabel"
