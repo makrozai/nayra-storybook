@@ -28,13 +28,13 @@ const {
   handleIncrement,
   handleDecrement,
   handleReset
-} = useCounter(props.initialValue, emit)
+} = useCounter(() => props.initialValue, emit)
 </script>
 
 <template>
   <div class="c-card c-card--interactive" role="region" :aria-label="title">
     <!-- Efecto visual premium: Glow de fondo -->
-    <div class="c-card__glow" aria-hidden="true" />
+    <div class="c-card__glow" aria-hidden="true"></div>
 
     <!-- Encabezado de la Tarjeta (BEM Elements) -->
     <div class="c-card__header">
@@ -47,7 +47,7 @@ const {
         </p>
       </div>
       <!-- Indicador dinámico basado en modificadores de color BEM -->
-      <div class="c-card__indicator" :class="indicatorClass" aria-hidden="true" />
+      <div class="c-card__indicator" :class="indicatorClass" aria-hidden="true"></div>
     </div>
 
     <!-- Visualizador del Contador (BEM Elements & modifiers) -->
