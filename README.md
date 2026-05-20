@@ -44,6 +44,7 @@ Los componentes quedan disponibles globalmente como `<NaButton>`, `<NaIcon>`, `<
 | [Desarrollo local](./docs/development.md) | Setup, scripts, tests, linting, build, convenciones |
 | [Storybook](./docs/storybook.md) | Integración, dark mode, source transform, cómo añadir stories |
 | [CI/CD](./docs/ci-cd.md) | Workflows, protección de ramas, flujo de trabajo, publicación |
+| [Guía MCP](./docs/mcp-guide.md) | Integración, herramientas MCP de GitHub y automatizaciones de flujos |
 
 ---
 
