@@ -1,0 +1,13 @@
+@reference "../../assets/css/main.css";
+
+.c-footer {
+  @apply w-full max-w-7xl mx-auto px-6 py-6 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-content-muted z-10;
+}
+
+.c-footer__links {
+  @apply flex gap-6;
+}
+
+.c-footer__link {
+  @apply hover:text-primary transition-colors;
+}

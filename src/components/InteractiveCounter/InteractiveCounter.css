@@ -1,0 +1,71 @@
+@reference "../../assets/css/main.css";
+
+/* Componente: Tarjeta (.c-card) */
+.c-card {
+  @apply relative overflow-hidden rounded-3xl border border-border-subtle bg-surface-raised p-6 md:p-8 backdrop-blur-xl transition-all duration-500;
+}
+
+/* Modificadores de Tarjeta */
+.c-card--interactive {
+  @apply hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10;
+}
+
+/* Elementos de Tarjeta */
+.c-card__header {
+  @apply flex items-center justify-between gap-4 border-b border-border-subtle pb-4 mb-6;
+}
+
+.c-card__title {
+  @apply bg-gradient-to-r from-primary via-secondary to-pink-400 bg-clip-text text-lg font-bold tracking-tight text-transparent;
+}
+
+.c-card__description {
+  @apply mt-1 text-xs text-content-muted leading-relaxed max-w-md;
+}
+
+.c-card__indicator {
+  @apply h-3 w-3 rounded-full transition-all duration-500 shadow-lg;
+}
+
+/* Modificadores del indicador */
+.c-card__indicator--positive {
+  @apply bg-success shadow-success/50;
+}
+
+.c-card__indicator--negative {
+  @apply bg-error shadow-error/50;
+}
+
+.c-card__indicator--neutral {
+  @apply bg-warning shadow-warning/50;
+}
+
+.c-card__glow {
+  @apply absolute -right-16 -top-16 -z-10 h-32 w-32 rounded-full bg-gradient-to-br from-primary to-secondary opacity-20 blur-2xl;
+}
+
+/* Componente: Visualizador del Contador (.c-counter-display) */
+.c-counter-display {
+  @apply flex flex-col items-center justify-center py-6;
+}
+
+.c-counter-display__label {
+  @apply text-xs font-semibold uppercase tracking-widest text-content-muted;
+}
+
+.c-counter-display__value {
+  @apply mt-2 text-6xl font-black tabular-nums tracking-tight transition-all duration-300;
+}
+
+/* Modificadores del valor */
+.c-counter-display__value--positive {
+  @apply text-success;
+}
+
+.c-counter-display__value--negative {
+  @apply text-error;
+}
+
+.c-counter-display__value--neutral {
+  @apply text-content-base;
+}
