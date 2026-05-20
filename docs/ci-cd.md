@@ -75,7 +75,7 @@ push a master
 
 ### `dependency-review.yml` — Auditoría de dependencias
 
-Se ejecuta en cada PR a `master`. Escanea `pnpm-lock.yaml` en busca de CVEs y bloquea el merge si detecta paquetes inseguros.
+Se ejecuta en cada PR hacia `develop` y `master`. Escanea `pnpm-lock.yaml` en busca de CVEs y bloquea el merge si detecta paquetes inseguros, comentando automáticamente el reporte en el PR para visibilizar vulnerabilidades de forma temprana.
 
 ## Protección de ramas
 
