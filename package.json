@@ -1,0 +1,53 @@
+{
+  "name": "nayra-storybook",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/nayra-storybook.js",
+  "module": "dist/nayra-storybook.js",
+  "types": "dist/index.d.ts",
+  "style": "dist/style.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/nayra-storybook.js",
+      "require": "./dist/nayra-storybook.js"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.vue"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vue-tsc --emitDeclarationOnly",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/vue3": "^8.6.18",
+    "@storybook/vue3-vite": "^8.6.18",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/node": "^25.9.1",
+    "@vitejs/plugin-vue": "^5.2.0",
+    "storybook": "^8.6.18",
+    "storybook-dark-mode": "^4.0.2",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^5.7.0",
+    "vite": "^5.2.0",
+    "vite-svg-loader": "^5.1.1",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.1.10"
+  }
+}
