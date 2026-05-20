@@ -1,0 +1,116 @@
+name: Auto PR to master
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  release-pr:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate next version
+        id: semver
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+          COMMITS=$(git log "$MERGE_BASE"..HEAD --pretty=format:"%s")
+
+          if echo "$COMMITS" | grep -qiE "^.+!:|BREAKING[[:space:]]CHANGE"; then
+            NEXT="$((MAJOR + 1)).0.0"
+          elif echo "$COMMITS" | grep -qE "^feat(\([^)]+\))?[!:]?[[:space:]]"; then
+            NEXT="${MAJOR}.$((MINOR + 1)).0"
+          else
+            NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+
+          get_section() {
+            git log "$MERGE_BASE"..HEAD --pretty=format:"%s" \
+              | grep -E "$1" \
+              | sed -E "$2" \
+              | sed 's/^/- /' \
+              || true
+          }
+
+          FEATURES=$(get_section "^feat(\([^)]+\))?:" 's/^feat(\([^)]+\))?:[[:space:]]*//')
+          FIXES=$(get_section "^fix(\([^)]+\))?:" 's/^fix(\([^)]+\))?:[[:space:]]*//')
+          CI_ITEMS=$(get_section "^ci(\([^)]+\))?:" 's/^ci(\([^)]+\))?:[[:space:]]*//')
+          DOCS=$(get_section "^docs(\([^)]+\))?:" 's/^docs(\([^)]+\))?:[[:space:]]*//')
+          CHORE=$(get_section "^chore(\([^)]+\))?:" 's/^chore(\([^)]+\))?:[[:space:]]*//')
+
+          {
+            echo "## Versión propuesta: v${{ steps.semver.outputs.next }}"
+            echo ""
+            if [ -n "$FEATURES" ]; then
+              echo "### Nuevas funcionalidades"
+              echo "$FEATURES"
+              echo ""
+            fi
+            if [ -n "$FIXES" ]; then
+              echo "### Correcciones"
+              echo "$FIXES"
+              echo ""
+            fi
+            if [ -n "$CI_ITEMS" ]; then
+              echo "### CI/CD"
+              echo "$CI_ITEMS"
+              echo ""
+            fi
+            if [ -n "$DOCS" ]; then
+              echo "### Documentación"
+              echo "$DOCS"
+              echo ""
+            fi
+            if [ -n "$CHORE" ]; then
+              echo "### Mantenimiento"
+              echo "$CHORE"
+              echo ""
+            fi
+            echo "---"
+            echo "_Generado automáticamente desde commits en \`develop\`_"
+          } > /tmp/pr-body.md
+
+      - name: Create or update PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="release: v${{ steps.semver.outputs.next }}"
+
+          PR_NUMBER=$(gh pr list \
+            --base master \
+            --head develop \
+            --json number \
+            --jq 'if length > 0 then .[0].number else "" end' 2>/dev/null)
+
+          if [ -z "$PR_NUMBER" ]; then
+            gh pr create \
+              --title "$TITLE" \
+              --body-file /tmp/pr-body.md \
+              --base master \
+              --head develop \
+              --reviewer makrozai
+          else
+            gh pr edit "$PR_NUMBER" \
+              --title "$TITLE" \
+              --body-file /tmp/pr-body.md
+            gh pr edit "$PR_NUMBER" --add-reviewer makrozai 2>/dev/null || true
+          fi
