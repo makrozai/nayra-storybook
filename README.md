@@ -5,6 +5,8 @@
 ![Version](https://img.shields.io/badge/version-1.0.1-6366f1?style=flat-square)
 ![Vue](https://img.shields.io/badge/Vue-3.5%2B-42b883?style=flat-square&logo=vuedotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7%2B-3178c6?style=flat-square&logo=typescript)
+![Vitest](https://img.shields.io/badge/Vitest-3.2%2B-76b900?style=flat-square&logo=vitest)
+![Playwright](https://img.shields.io/badge/Playwright-1.60%2B-2e8b57?style=flat-square&logo=playwright)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
 **Storybook en vivo:** [makrozai.github.io/nayra-storybook](https://makrozai.github.io/nayra-storybook/)
