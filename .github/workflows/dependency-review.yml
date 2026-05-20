@@ -34,6 +34,11 @@ jobs:
         # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
         with:
           comment-summary-in-pr: always
+          allow-dependencies-licenses: |
+            pkg:github/actions/checkout
+            pkg:github/actions/setup-node
+            pkg:github/actions/upload-artifact
+            pkg:github/pnpm/action-setup
         #   fail-on-severity: moderate
         #   deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
         #   retry-on-snapshot-warnings: true
