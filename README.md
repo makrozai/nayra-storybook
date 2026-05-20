@@ -4,6 +4,8 @@
 
 Proporciona un sistema de diseño agnóstico centralizado, preparado para implementaciones *white-label* mediante Design Tokens como variables CSS.
 
+**Storybook en vivo:** [makrozai.github.io/nayra-storybook](https://makrozai.github.io/nayra-storybook/)
+
 ---
 
 ## Tabla de contenidos
@@ -18,6 +20,7 @@ Proporciona un sistema de diseño agnóstico centralizado, preparado para implem
 - [Entorno de desarrollo local](#entorno-de-desarrollo-local)
 - [Integración con Storybook](#integración-con-storybook)
 - [Build y publicación](#build-y-publicación)
+- [CI/CD y despliegue](#cicd-y-despliegue)
 
 ---
 
@@ -823,3 +826,47 @@ El alias `~` apunta a `src/`:
 // Equivalente a src/composables/useNayraTheme.ts
 import { useNayraTheme } from '~/composables/useNayraTheme'
 ```
+
+---
+
+## CI/CD y despliegue
+
+### Estrategia de ramas
+
+| Rama | Propósito | Acceso |
+|---|---|---|
+| `develop` | Desarrollo activo. Todo el trabajo nuevo parte de aquí | Push directo |
+| `master` | Producción. Cada merge dispara el pipeline de deploy | Solo via PR aprobado |
+| `gh-pages` | Generada automáticamente por CI. Nunca se toca manualmente | Solo escritura del bot |
+
+### Pipeline (GitHub Actions)
+
+El archivo `.github/workflows/deploy.yml` se ejecuta en cada push a `master`:
+
+```
+push a master
+  └─ pnpm install --frozen-lockfile
+  └─ pnpm lint
+  └─ pnpm test
+  └─ pnpm build          ← valida que dist/ compila correctamente
+  └─ pnpm storybook:build
+       └─ peaceiris/actions-gh-pages
+            └─ publica storybook-static/ en gh-pages
+                 └─ GitHub Pages sirve el sitio en producción
+```
+
+### Flujo de trabajo diario
+
+```bash
+# 1. Trabajar en develop
+git checkout develop
+# ... cambios, commits ...
+git push origin develop
+
+# 2. Crear PR de develop → master en GitHub
+# 3. Revisar y aprobar el PR
+# 4. Merge → el pipeline despliega automáticamente
+```
+
+El Storybook actualizado queda disponible en:
+`https://makrozai.github.io/nayra-storybook/`
