@@ -1,0 +1,41 @@
+@reference "../../assets/css/main.css";
+
+.c-header {
+  @apply w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between border-b border-border-subtle backdrop-blur-md sticky top-0 z-50;
+}
+
+.c-header__logo-container {
+  @apply flex items-center gap-3;
+}
+
+.c-header__logo-icon {
+  @apply h-10 w-10 rounded-xl bg-gradient-to-br from-primary via-secondary to-pink-500 flex items-center justify-center shadow-lg shadow-primary/20;
+}
+
+.c-header__title {
+  @apply text-sm font-black tracking-wider uppercase bg-gradient-to-r from-content-base via-content-body to-content-muted bg-clip-text text-transparent;
+}
+
+.c-header__subtitle {
+  @apply text-[9px] font-bold text-primary tracking-widest block uppercase;
+}
+
+.c-header__badge {
+  @apply flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-subtle border border-success/20 shadow-lg shadow-success/5;
+}
+
+.c-header__badge-dot {
+  @apply relative flex h-2 w-2;
+}
+
+.c-header__badge-dot-ping {
+  @apply animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75;
+}
+
+.c-header__badge-dot-core {
+  @apply relative inline-flex rounded-full h-2 w-2 bg-success;
+}
+
+.c-header__badge-text {
+  @apply text-xs font-semibold text-success tracking-wide;
+}

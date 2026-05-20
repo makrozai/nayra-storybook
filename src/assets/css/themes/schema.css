@@ -1,0 +1,154 @@
+/**
+ * NAYRA UI - CENTRALIZED DESIGN TOKENS
+ * 
+ * Este archivo centraliza todas las variables de tema (colores, jerarquías y fuentes)
+ * necesarias para los componentes.
+ * 
+ * CÓMO PERSONALIZAR (OVERRIDE):
+ * Para modificar los colores primarios en tu aplicación, simplemente redefine estas variables 
+ * en tu archivo CSS global dentro de `:root` o `[data-nayra-theme="light"]`:
+ * 
+ * :root {
+ *   --theme-primary: var(--color-blue-600);
+ *   --theme-secondary: var(--color-purple-500);
+ * }
+ */
+
+@theme {
+  /* =========================================
+     1. COLORES DE MARCA (BRAND)
+     ========================================= */
+  --color-primary: var(--theme-primary);
+  --color-primary-content: var(--theme-primary-content);
+  --color-primary-hover: var(--theme-primary-hover);
+  --color-primary-active: var(--theme-primary-active);
+  
+  --color-secondary: var(--theme-secondary);
+  --color-secondary-content: var(--theme-secondary-content);
+  
+  /* =========================================
+     2. COLORES SEMÁNTICOS (STATUS / ALERTAS)
+     ========================================= */
+  --color-success: var(--theme-success);
+  --color-success-content: var(--theme-success-content);
+  --color-success-subtle: var(--theme-success-subtle);
+  
+  --color-error: var(--theme-error);
+  --color-error-content: var(--theme-error-content);
+  --color-error-subtle: var(--theme-error-subtle);
+  
+  --color-warning: var(--theme-warning);
+  --color-warning-content: var(--theme-warning-content);
+  
+  --color-info: var(--theme-info);
+  --color-info-content: var(--theme-info-content);
+
+  /* =========================================
+     3. JERARQUÍA DE SUPERFICIES (FONDOS)
+     ========================================= */
+  --color-surface-base: var(--theme-surface-base);
+  --color-surface-raised: var(--theme-surface-raised);
+  --color-surface-overlay: var(--theme-surface-overlay);
+  --color-surface-muted: var(--theme-surface-muted);
+
+  /* =========================================
+     4. CONTENIDO (TEXTOS E ICONOS)
+     ========================================= */
+  --color-content-base: var(--theme-content-base);
+  --color-content-body: var(--theme-content-body);
+  --color-content-muted: var(--theme-content-muted);
+
+  /* =========================================
+     5. BORDES Y ESTADOS GLOBALES
+     ========================================= */
+  --color-border-subtle: var(--theme-border-subtle);
+  --color-border-base: var(--theme-border-base);
+  --color-border-strong: var(--theme-border-strong);
+  --color-ring-focus: var(--theme-ring-focus);
+}
+
+:root, [data-nayra-theme="light"] {
+  /* Brand */
+  --theme-primary: var(--color-indigo-600);
+  --theme-primary-content: var(--color-white);
+  --theme-primary-hover: var(--color-indigo-700);
+  --theme-primary-active: var(--color-indigo-800);
+  
+  --theme-secondary: var(--color-pink-600);
+  --theme-secondary-content: var(--color-white);
+  
+  /* Semantic */
+  --theme-success: var(--color-emerald-600);
+  --theme-success-content: var(--color-white);
+  --theme-success-subtle: var(--color-emerald-50);
+  
+  --theme-error: var(--color-rose-600);
+  --theme-error-content: var(--color-white);
+  --theme-error-subtle: var(--color-rose-50);
+  
+  --theme-warning: var(--color-amber-500);
+  --theme-warning-content: var(--color-white);
+  
+  --theme-info: var(--color-blue-500);
+  --theme-info-content: var(--color-white);
+  
+  /* Surfaces */
+  --theme-surface-base: var(--color-white);
+  --theme-surface-raised: var(--color-slate-50);
+  --theme-surface-overlay: var(--color-white);
+  --theme-surface-muted: var(--color-slate-100);
+  
+  /* Content */
+  --theme-content-base: var(--color-slate-900);
+  --theme-content-body: var(--color-slate-700);
+  --theme-content-muted: var(--color-slate-500);
+  
+  /* Borders & Rings */
+  --theme-border-subtle: var(--color-slate-100);
+  --theme-border-base: var(--color-slate-200);
+  --theme-border-strong: var(--color-slate-300);
+  --theme-ring-focus: var(--color-indigo-500);
+}
+
+[data-nayra-theme="dark"] {
+  /* Brand */
+  --theme-primary: var(--color-indigo-500);
+  --theme-primary-content: var(--color-white);
+  --theme-primary-hover: var(--color-indigo-400);
+  --theme-primary-active: var(--color-indigo-300);
+  
+  --theme-secondary: var(--color-pink-500);
+  --theme-secondary-content: var(--color-white);
+  
+  /* Semantic */
+  --theme-success: var(--color-emerald-500);
+  --theme-success-content: var(--color-white);
+  --theme-success-subtle: var(--color-emerald-900);
+  
+  --theme-error: var(--color-rose-500);
+  --theme-error-content: var(--color-white);
+  --theme-error-subtle: var(--color-rose-900);
+  
+  --theme-warning: var(--color-amber-400);
+  --theme-warning-content: var(--color-slate-900);
+  
+  --theme-info: var(--color-blue-400);
+  --theme-info-content: var(--color-slate-900);
+  
+  /* Surfaces */
+  --theme-surface-base: var(--color-slate-950);
+  --theme-surface-raised: var(--color-slate-900);
+  --theme-surface-overlay: var(--color-slate-800);
+  --theme-surface-muted: var(--color-slate-800);
+  
+  /* Content */
+  --theme-content-base: var(--color-white);
+  --theme-content-body: var(--color-slate-300);
+  --theme-content-muted: var(--color-slate-400);
+  
+  /* Borders & Rings */
+  --theme-border-subtle: var(--color-slate-800);
+  --theme-border-base: var(--color-slate-700);
+  --theme-border-strong: var(--color-slate-600);
+  --theme-ring-focus: var(--color-indigo-400);
+}

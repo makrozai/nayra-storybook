@@ -1,0 +1,23 @@
+@reference "../../assets/css/main.css";
+
+.c-icon-wrapper {
+  @apply inline-flex items-center justify-center;
+  color: inherit;
+}
+
+.c-icon {
+  @apply inline-block transition-transform duration-300;
+}
+
+/* Los SVGs nativos necesitan heredar el alto de línea (em) igual que los iconos de fuente */
+.c-icon--svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+/* Los SVGs coloridos mantienen sus colores originales sin inyectar currentColor */
+.c-icon--colorful {
+  width: 1em;
+  height: 1em;
+}
