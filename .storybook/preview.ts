@@ -2,6 +2,7 @@ import { setup } from '@storybook/vue3'
 import type { Preview } from '@storybook/vue3'
 import { NayraUI } from '../src/index'
 import { useNayraTheme } from '../src/composables/useNayraTheme'
+import { nayraConfig } from '../src/config'
 import { addons } from '@storybook/preview-api'
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode'
 import { themes } from '@storybook/theming'
@@ -11,7 +12,7 @@ import '../src/assets/css/main.css'
 
 setup((app) => {
   // Inicializar la UI de Nayra con el tema por defecto (oscuro) y registrar todos los componentes
-  app.use(NayraUI, { theme: 'dark' })
+  app.use(NayraUI, { theme: 'dark', prefix: 'Na' })
 })
 
 // Canal de comunicación para sincronizar el tema de Storybook (Manager y Docs) con nuestros componentes
@@ -85,7 +86,22 @@ const preview: Preview = {
       current: 'system' // Seguir la preferencia del sistema por defecto
     },
     docs: {
-      container: CustomDocsContainer
+      container: CustomDocsContainer,
+      source: {
+        transform: (src: string) => {
+          const prefix = nayraConfig.prefix
+          const names = [
+            'Button', 'Icon', 'Header', 'Footer',
+            'HeroSection', 'FeatureCard', 'InteractiveCounter', 'CounterControls'
+          ]
+          let result = src
+          for (const name of names) {
+            result = result.replaceAll(`<${name}`, `<${prefix}${name}`)
+            result = result.replaceAll(`</${name}>`, `</${prefix}${name}>`)
+          }
+          return result
+        }
+      }
     },
     controls: {
       matchers: {
