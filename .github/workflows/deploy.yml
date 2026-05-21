@@ -20,7 +20,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 26
           cache: pnpm
 
       - name: Verify lockfile deduplication
@@ -40,6 +40,8 @@ jobs:
 
       - name: Build Storybook
         run: pnpm storybook:build
+        env:
+          STORYBOOK_BASE_PATH: /nayra-storybook/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
@@ -51,7 +53,7 @@ jobs:
       - name: Setup Node for GitHub Packages
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 26
           registry-url: 'https://npm.pkg.github.com'
           scope: '@makrozai'
 
