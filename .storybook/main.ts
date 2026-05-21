@@ -3,7 +3,7 @@ import type { InlineConfig } from 'vite'
 
 const config: StorybookConfig = {
   stories: ['../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: ['@storybook/addon-essentials', 'storybook-dark-mode'],
+  addons: ['storybook-dark-mode', '@storybook/addon-docs'],
   framework: {
     name: '@storybook/vue3-vite',
     options: {}
