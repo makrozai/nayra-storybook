@@ -1,11 +1,20 @@
-@reference "../../assets/css/main.css";
+
 
 .c-feature-card {
   @apply flex items-start gap-3 p-3.5 rounded-2xl bg-surface-muted border border-border-subtle transition-all duration-300 hover:bg-surface-raised;
 }
 
 .c-feature-card__icon {
-  @apply mt-1.5 h-2 w-2 rounded-full flex-shrink-0;
+  @apply rounded-full flex-shrink-0 transition-all duration-300;
+}
+
+.c-feature-card__icon:empty {
+  @apply h-2 w-2 mt-1.5;
+}
+
+.c-feature-card__icon:not(:empty) {
+  @apply h-5 w-5 mt-0.5 flex items-center justify-center text-white;
+  font-size: 10px;
 }
 
 .c-feature-card__title {
