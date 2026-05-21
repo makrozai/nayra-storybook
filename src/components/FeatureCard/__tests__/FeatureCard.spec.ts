@@ -1,10 +1,20 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
 import FeatureCard from '../FeatureCard.vue'
 import type { FeatureCardColor } from '../types'
 
-const mountCard = (props: { title: string; description: string; color: FeatureCardColor }) =>
-  mount(FeatureCard, { props })
+const NaIconStub = defineComponent({
+  name: 'NaIcon',
+  props: ['source', 'icon', 'type', 'size', 'ariaLabel'],
+  template: '<div class="na-icon-stub" :data-icon="icon" :data-source="source" :data-type="type"></div>'
+})
+
+const mountCard = (props: { title: string; description: string; color: FeatureCardColor; icon?: string; iconSource?: any; iconType?: any }) =>
+  mount(FeatureCard, {
+    props,
+    global: { stubs: { NaIcon: NaIconStub } }
+  })
 
 describe('FeatureCard', () => {
   it('renderiza sin errores', () => {
@@ -42,6 +52,37 @@ describe('FeatureCard', () => {
     it(`aplica la clase "${expectedClass}" cuando color="${color}"`, () => {
       const wrapper = mountCard({ title: 'T', description: 'D', color })
       expect(wrapper.find('.c-feature-card__icon').classes()).toContain(expectedClass)
+    })
+  })
+
+  describe('Soporte de NaIcon', () => {
+    it('no renderiza NaIcon cuando el prop icon no está presente', () => {
+      const wrapper = mountCard({ title: 'T', description: 'D', color: 'indigo' })
+      expect(wrapper.find('.na-icon-stub').exists()).toBe(false)
+    })
+
+    it('renderiza NaIcon cuando el prop icon está presente', () => {
+      const wrapper = mountCard({ title: 'T', description: 'D', color: 'indigo', icon: 'star' })
+      const icon = wrapper.find('.na-icon-stub')
+      expect(icon.exists()).toBe(true)
+      expect(icon.attributes('data-icon')).toBe('star')
+    })
+
+    it('pasa los props iconSource e iconType correctamente al NaIcon', () => {
+      const wrapper = mountCard({
+        title: 'T', description: 'D', color: 'indigo',
+        icon: 'bolt', iconSource: 'svg', iconType: 'regular'
+      })
+      const icon = wrapper.find('.na-icon-stub')
+      expect(icon.attributes('data-source')).toBe('svg')
+      expect(icon.attributes('data-type')).toBe('regular')
+    })
+
+    it('usa iconSource="font" y iconType="solid" como defaults', () => {
+      const wrapper = mountCard({ title: 'T', description: 'D', color: 'indigo', icon: 'user' })
+      const icon = wrapper.find('.na-icon-stub')
+      expect(icon.attributes('data-source')).toBe('font')
+      expect(icon.attributes('data-type')).toBe('solid')
     })
   })
 })

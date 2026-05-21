@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Button from '../Button/Button.vue'
+import NaIcon from '../Icon/Icon.vue'
 import type { CounterControlsProps, CounterControlsEmits } from './types'
 
 defineOptions({ name: 'CounterControls' })
@@ -44,17 +45,7 @@ const handleIncrement = (): void => {
       @click="handleDecrement"
     >
       <template #icon>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="c-btn__icon"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
-        </svg>
+        <NaIcon source="svg" icon="minus" type="solid" :size="24" class="c-btn__icon" />
       </template>
     </Button>
 
@@ -67,21 +58,7 @@ const handleIncrement = (): void => {
       @click="handleReset"
     >
       <template #icon>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="c-btn__icon"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m-3-3v12"
-          />
-        </svg>
+        <NaIcon source="svg" icon="arrow-path" type="solid" :size="24" class="c-btn__icon" />
       </template>
     </Button>
 
@@ -94,17 +71,7 @@ const handleIncrement = (): void => {
       @click="handleIncrement"
     >
       <template #icon>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="c-btn__icon"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
+        <NaIcon source="svg" icon="plus" type="solid" :size="24" class="c-btn__icon" />
       </template>
     </Button>
   </div>

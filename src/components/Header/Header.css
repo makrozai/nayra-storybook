@@ -1,4 +1,4 @@
-@reference "../../assets/css/main.css";
+
 
 .c-header {
   @apply w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between border-b border-border-subtle backdrop-blur-md sticky top-0 z-50;
