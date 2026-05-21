@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-CYnhYu8d.js";import{et as t,nt as n,rt as r,tt as i}from"./iframe-CrbqLvEx.js";function a(e,t){return r(),n(`svg`,o,[...t[0]||=[i(`path`,{d:`M5 11.25a.75.75 0 0 0 0 1.5h14a.75.75 0 0 0 0-1.5z`},null,-1)]])}var o,s;e((()=>{t(),o={fill:`currentColor`,viewBox:`0 0 24 24`},s={render:a}}))();export{s as default,a as render};
