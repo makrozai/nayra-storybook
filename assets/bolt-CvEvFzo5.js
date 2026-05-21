@@ -1,1 +1,0 @@
-import{p as o,f as l,b as r}from"./vue.esm-bundler-XVrXqM2o.js";const t={fill:"currentColor",viewBox:"0 0 24 24"};function n(d,e){return o(),l("svg",t,[...e[0]||(e[0]=[r("path",{"fill-rule":"evenodd",d:"m3.75 13.5 10.5-11.25L12 10.5h8.25L10.5 21.75l2.25-8.25z","clip-rule":"evenodd"},null,-1)])])}const a={render:n};export{a as default,n as render};
