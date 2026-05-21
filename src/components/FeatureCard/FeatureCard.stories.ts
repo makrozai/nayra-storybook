@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
+import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import FeatureCard from './FeatureCard.vue'
 
 const meta: Meta<typeof FeatureCard> = {
