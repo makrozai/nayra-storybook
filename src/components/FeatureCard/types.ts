@@ -4,4 +4,7 @@ export interface FeatureCardProps {
   title: string
   description: string
   color: FeatureCardColor
+  icon?: string
+  iconSource?: 'font' | 'svg'
+  iconType?: 'solid' | 'regular' | 'brands' | 'colorful'
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { FeatureCardProps, FeatureCardColor } from './types'
+import NaIcon from '../Icon/Icon.vue'
 
 defineOptions({ name: 'FeatureCard' })
 
@@ -8,7 +9,10 @@ defineOptions({ name: 'FeatureCard' })
  * @component FeatureCard
  * @description Molécula para mostrar una característica con un icono de color y descripción.
  */
-const props = defineProps<FeatureCardProps>()
+const props = withDefaults(defineProps<FeatureCardProps>(), {
+  iconSource: 'font',
+  iconType: 'solid',
+})
 
 const colorClassMap: Record<FeatureCardColor, string> = {
   indigo: 'bg-indigo-400',
@@ -26,7 +30,9 @@ const iconClass = computed(() => colorClassMap[props.color])
 
 <template>
   <div class="c-feature-card">
-    <div class="c-feature-card__icon" :class="iconClass" aria-hidden="true"></div>
+    <div class="c-feature-card__icon" :class="iconClass" aria-hidden="true">
+      <NaIcon v-if="icon" :source="iconSource" :icon="icon" :type="iconType" :size="12" />
+    </div>
     <div>
       <h3 class="c-feature-card__title">{{ title }}</h3>
       <p class="c-feature-card__description">
