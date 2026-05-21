@@ -36,23 +36,38 @@ pnpm storybook
 
 ## Tests
 
-El proyecto usa **Vitest** para tests unitarios y de componentes, y **Playwright** para E2E.
+El proyecto usa **Vitest** para tests unitarios y de componentes, y **Playwright** para pruebas de integración de extremo a extremo (E2E).
+
+### Tests Unitarios y de Componentes
+
+Ejecutados con Vitest en un entorno virtual ultra-rápido (sin necesidad de levantar un navegador real):
 
 ```bash
-# Tests unitarios (rápido, sin browser)
+# Ejecutar tests unitarios una sola vez
 pnpm test
 
-# Tests con cobertura
-pnpm test:coverage
+# Ejecutar tests unitarios en modo desarrollo (watch)
+pnpm test:watch
 
-# Tests E2E (requiere Storybook corriendo)
-pnpm storybook &   # en una terminal
-pnpm test:e2e      # en otra terminal
+# Generar reporte de cobertura de código
+pnpm test:coverage
 ```
 
-### Suite de tests (124 tests)
+### Tests E2E (Playwright)
 
-| Ámbito | Archivo | Tests |
+Los tests E2E prueban la integración real en el navegador de los componentes montados en Storybook.
+
+> [!NOTE]
+> Gracias a la configuración de Playwright `webServer`, al ejecutar `pnpm test:e2e` se levantará automáticamente un servidor de Storybook de forma aislada en el puerto `6006` si no está ya en ejecución. Si ya tienes Storybook corriendo en dicho puerto, Playwright lo reutilizará directamente para agilizar la prueba.
+
+```bash
+# Ejecutar suite completa de tests E2E
+pnpm test:e2e
+```
+
+### Suite de Tests Unitarios (124 tests)
+
+| Ámbito / Componente | Archivo | Tests |
 |---|---|---|
 | `Button` | `Button.spec.ts` | 15 |
 | `Icon Gallery` | `IconGallery.spec.ts` | 14 |
@@ -66,7 +81,16 @@ pnpm test:e2e      # en otra terminal
 | `HeroSection` | `HeroSection.spec.ts` | 7 |
 | `useNayraTheme` | `useNayraTheme.spec.ts` | 8 |
 
-Los tests unitarios están en `src/components/**/__tests__/` y `src/composables/__tests__/`. Los E2E en `e2e/`.
+Los tests unitarios están ubicados junto a sus respectivos componentes en `src/components/**/__tests__/` y `src/composables/__tests__/`.
+
+### Suite de Tests E2E (13 tests)
+
+| Ámbito / Componente | Archivo | Cobertura de Pruebas | Tests |
+|---|---|---|---|
+| `Icon Gallery` | `e2e/icon-gallery.spec.ts` | Comportamiento del buscador interactivo, filtrado reactivo de iconos, contador de resultados y estados vacíos. | 9 |
+| `InteractiveCounter` | `e2e/interactive-counter.spec.ts` | Flujo de incremento/decremento de valores, reinicio al estado inicial y asignación de clases dinámicas BEM (`neutral`, `positive`, `negative`). | 4 |
+
+Las especificaciones E2E se encuentran en la carpeta raíz `e2e/` y se ejecutan sobre las historias de Storybook.
 
 ## Linting
 

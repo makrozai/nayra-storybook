@@ -94,7 +94,50 @@ export const AllColors: Story = {
   }),
   parameters: {
     docs: {
-      description: { story: 'Todas las variantes de color disponibles.' }
+      description: { story: 'Todas las variantes de color disponibles sin icono explícito (solo el bullet decorativo).' }
+    }
+  }
+}
+
+export const WithFontIcon: Story = {
+  args: {
+    title: 'Icono FontAwesome',
+    description: 'FeatureCard utilizando un icono de fuente (FontAwesome) pasando el prop icon.',
+    color: 'emerald',
+    icon: 'star',
+    iconSource: 'font',
+  },
+}
+
+export const WithSvgIcon: Story = {
+  args: {
+    title: 'Icono SVG Local',
+    description: 'FeatureCard utilizando un icono SVG cargado desde los assets locales (src/assets/icons).',
+    color: 'amber',
+    icon: 'bolt',
+    iconSource: 'svg',
+    iconType: 'solid',
+  },
+}
+
+export const AllColorsWithIcons: Story = {
+  render: () => ({
+    template: `
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+        <NaFeatureCard title="Vue 3" description="Framework progresivo" color="indigo" icon="tech-vue" iconSource="svg" iconType="colorful" />
+        <NaFeatureCard title="Rápido" description="Rendimiento óptimo" color="purple" icon="bolt" iconSource="svg" iconType="solid" />
+        <NaFeatureCard title="Favoritos" description="Guarda tus preferencias" color="pink" icon="star" iconSource="font" />
+        <NaFeatureCard title="Suma" description="Añade elementos" color="teal" icon="plus" iconSource="svg" iconType="solid" />
+        <NaFeatureCard title="Resta" description="Quita elementos" color="amber" icon="minus" iconSource="svg" iconType="solid" />
+        <NaFeatureCard title="Actualizar" description="Sincroniza datos" color="emerald" icon="arrow-path" iconSource="svg" iconType="solid" />
+        <NaFeatureCard title="Personalizado" description="Icono SVG Outline" color="rose" icon="bolt" iconSource="svg" iconType="regular" />
+        <NaFeatureCard title="Estrella" description="Icono SVG" color="sky" icon="custom-star" iconSource="svg" iconType="regular" />
+      </div>
+    `
+  }),
+  parameters: {
+    docs: {
+      description: { story: 'Todas las variantes de color con diferentes tipos de iconos (font y svg).' }
     }
   }
 }
