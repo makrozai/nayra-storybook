@@ -1,16 +1,16 @@
-import { setup } from '@storybook/vue3'
-import type { Preview } from '@storybook/vue3'
+import { setup } from '@storybook/vue3-vite'
+import type { Preview } from '@storybook/vue3-vite'
 import { NayraUI } from '../src/index'
 import { useNayraTheme } from '../src/composables/useNayraTheme'
 import { nayraConfig } from '../src/config'
 import { componentRegistry } from '../src/registry'
-import { addons } from '@storybook/preview-api'
+import { addons } from 'storybook/internal/preview-api'
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode'
-import { themes } from '@storybook/theming'
-import type { DocsContainerProps } from '@storybook/blocks'
+import { themes } from 'storybook/theming'
+import type { DocsContainerProps } from '@storybook/addon-docs/blocks'
 import type { PropsWithChildren } from 'react'
 import React, { useEffect, useState } from 'react'
-import { DocsContainer as BaseDocsContainer } from '@storybook/blocks'
+import { DocsContainer as BaseDocsContainer } from '@storybook/addon-docs/blocks'
 import '../src/assets/css/main.css'
 import './preview.css'
 
@@ -72,7 +72,7 @@ export const CustomDocsContainer = ({ children, context }: PropsWithChildren<Doc
 const preview: Preview = {
   parameters: {
     layout: 'centered',
-    backgrounds: { disable: true },
+    backgrounds: { disabled: true },
     darkMode: {
       dark: themes.dark,
       light: themes.normal,
