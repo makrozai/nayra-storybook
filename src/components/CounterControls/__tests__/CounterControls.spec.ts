@@ -1,11 +1,18 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
 import CounterControls from '../CounterControls.vue'
+
+const NaIconStub = defineComponent({
+  name: 'NaIcon',
+  props: ['source', 'icon', 'type', 'size', 'ariaLabel'],
+  template: '<div class="na-icon-stub" :data-icon="icon" :data-source="source" :data-type="type"></div>'
+})
 
 const mountControls = (props = {}) => mount(CounterControls, {
   props,
   global: {
-    // Button usa <button> nativo — no requiere stub
+    stubs: { NaIcon: NaIconStub }
   }
 })
 
@@ -64,6 +71,26 @@ describe('CounterControls', () => {
     const wrapper = mountControls({ disabled: false })
     wrapper.findAll('button').forEach(btn => {
       expect(btn.attributes('disabled')).toBeUndefined()
+    })
+  })
+
+  describe('Iconos (NaIcon)', () => {
+    it('cada botón contiene un componente NaIcon con source="svg" y type="solid"', () => {
+      const wrapper = mountControls()
+      const icons = wrapper.findAll('.na-icon-stub')
+      expect(icons).toHaveLength(3)
+      icons.forEach(icon => {
+        expect(icon.attributes('data-source')).toBe('svg')
+        expect(icon.attributes('data-type')).toBe('solid')
+      })
+    })
+
+    it('los iconos tienen los nombres correctos (minus, arrow-path, plus)', () => {
+      const wrapper = mountControls()
+      const icons = wrapper.findAll('.na-icon-stub')
+      expect(icons[0].attributes('data-icon')).toBe('minus')
+      expect(icons[1].attributes('data-icon')).toBe('arrow-path')
+      expect(icons[2].attributes('data-icon')).toBe('plus')
     })
   })
 })
