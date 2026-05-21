@@ -7,6 +7,9 @@
   "module": "dist/nayra-storybook.js",
   "types": "dist/index.d.ts",
   "style": "dist/style.css",
+  "engines": {
+    "node": ">=26"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
@@ -35,8 +38,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "lint": "eslint src --ext .ts,.vue",
-    "lint:fix": "eslint src --ext .ts,.vue --fix"
+    "test:storybook": "test-storybook --url http://localhost:6006",
+    "test:storybook:ci": "test-storybook --url http://localhost:6006 --ci",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "peerDependencies": {
     "vue": "^3.5.0"
@@ -47,6 +52,7 @@
   "devDependencies": {
     "@playwright/test": "^1.60.0",
     "@storybook/addon-docs": "^10.4.0",
+    "@storybook/test-runner": "^0.24.4",
     "@storybook/vue3": "^10.4.0",
     "@storybook/vue3-vite": "^10.4.0",
     "@tailwindcss/vite": "^4.3.0",
@@ -62,7 +68,6 @@
     "eslint-plugin-vue": "^10.9.1",
     "happy-dom": "^20.9.0",
     "storybook": "^10.4.0",
-    "storybook-dark-mode": "^5.0.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.13",

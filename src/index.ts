@@ -31,28 +31,11 @@ export { useNayraTheme } from './composables/useNayraTheme'
 export type { ThemeValue } from './composables/useNayraTheme'
 
 // Component prop/emit types
-export type { ButtonProps, ButtonEmits } from './components/Button/types'
 export type { IconProps } from './components/Icon/types'
-export type { HeaderProps } from './components/Header/types'
-export type { FooterProps } from './components/Footer/types'
-export type { HeroSectionProps } from './components/HeroSection/types'
-export type { FeatureCardProps, FeatureCardColor } from './components/FeatureCard/types'
-export type { InteractiveCounterProps, InteractiveCounterEmits } from './components/InteractiveCounter/types'
-export type { CounterControlsProps, CounterControlsEmits } from './components/CounterControls/types'
 
 // Icon gallery
 export { useIconGallery } from './components/Icon/useIconGallery'
 export type { IconEntry, IconVariant, UseIconGalleryReturn } from './components/Icon/useIconGallery'
 
 // Individual components
-export const {
-  Button,
-  Icon,
-  IconGallery,
-  Header,
-  Footer,
-  HeroSection,
-  FeatureCard,
-  InteractiveCounter,
-  CounterControls,
-} = componentRegistry
+export const { Icon, IconGallery } = componentRegistry
