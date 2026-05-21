@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
 import Header from '../Header.vue'
+
+const NaIconStub = defineComponent({
+  name: 'NaIcon',
+  props: ['source', 'icon', 'type', 'size', 'ariaLabel'],
+  template: '<div class="na-icon-stub" :data-icon="icon" :data-source="source" :data-type="type"></div>'
+})
 
 const defaultProps = {
   title: 'Nayra UI',
@@ -9,7 +16,10 @@ const defaultProps = {
 }
 
 const mountHeader = (props = {}) => mount(Header, {
-  props: { ...defaultProps, ...props }
+  props: { ...defaultProps, ...props },
+  global: {
+    stubs: { NaIcon: NaIconStub }
+  }
 })
 
 describe('Header', () => {
@@ -51,8 +61,12 @@ describe('Header', () => {
     expect(wrapper.find('[data-testid="action-btn"]').exists()).toBe(true)
   })
 
-  it('el SVG del logo tiene aria-hidden="true"', () => {
+  it('el logo renderiza un componente NaIcon con icon="bolt"', () => {
     const wrapper = mountHeader()
-    expect(wrapper.find('svg').attributes('aria-hidden')).toBe('true')
+    const icon = wrapper.find('.na-icon-stub')
+    expect(icon.exists()).toBe(true)
+    expect(icon.attributes('data-icon')).toBe('bolt')
+    expect(icon.attributes('data-source')).toBe('svg')
+    expect(icon.attributes('data-type')).toBe('solid')
   })
 })
